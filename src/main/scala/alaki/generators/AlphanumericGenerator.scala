@@ -11,7 +11,7 @@ class AlphanumericGenerator[F[_]: Monad](val random: Random) extends DataGenerat
 
   def float: F[Float] = random.nextFloat.pure[F]
 
-  def number: F[Int] = random.nextInt(1000).pure[F]
+  def number: F[Int] = number(100000)
 
   def number(max: Int): F[Int] = random.nextInt(max).pure[F]
 

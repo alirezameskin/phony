@@ -12,7 +12,7 @@ package object data {
 
   case class CalendarData(days: Vector[String], months: Vector[String])
 
-  case class LoremData(words:Vector[String])
+  case class LoremData(words: Vector[String])
 
   case class Country(name: String, code: String)
   case class LocationData(countries: Vector[Country])
