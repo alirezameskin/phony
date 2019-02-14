@@ -1,13 +1,11 @@
 package alaki.generators
 
-import alaki.Locale
 import alaki.data._
 import alaki.resource.{LocaleProvider, SyncLocale}
+import alaki.{Locale, RandomUtility}
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
-
-import scala.util.Random
 
 class NameGeneratorSpec extends FunSuite with MockFactory {
 
@@ -20,69 +18,60 @@ class NameGeneratorSpec extends FunSuite with MockFactory {
   )
 
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
-  val random = mock[Random]
+  val random = mock[RandomUtility]
   val generator = new NameGenerator[IO](random)
 
   test("It should generate firstName") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (firstName <- generator.firstName) yield assert(firstName == "John")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    generator.firstName.map(name => assert(name == "John")).unsafeRunSync()
   }
 
   test("It should generate lastName") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.lastName) yield assert(lastName == "Richard")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
+    generator.lastName.map(name => assert(name == "Richard")).unsafeRunSync()
   }
 
   test("It should generate prefix") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.prefix) yield assert(lastName == "Mr")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.prefixes).returning("Mr")
+    generator.prefix.map(prefix => assert(prefix == "Mr")).unsafeRunSync()
   }
 
   test("It should generate suffix") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.suffix) yield assert(lastName == "I")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.suffixes).returning("I")
+    generator.suffix.map(suffix => assert(suffix == "I")).unsafeRunSync()
   }
 
   test("It should generate full name") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.fullName) yield assert(lastName == "John Richard")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
+    generator.fullName.map(name => assert(name == "John Richard")).unsafeRunSync()
   }
 
   test("It should generate full name with prefix") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.fullName(true, false))
-      yield assert(lastName == "Mr John Richard")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.prefixes).returning("Mr")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
+    generator.fullName(true, false).map(name => assert(name == "Mr John Richard")).unsafeRunSync()
   }
 
   test("It should generate full name with suffix") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    val test = for (lastName <- generator.fullName(false, true))
-      yield assert(lastName == "John Richard I")
-    test.unsafeRunSync()
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.suffixes).returning("I")
+    generator.fullName(false, true).map(name => assert(name == "John Richard I")).unsafeRunSync()
   }
 
   test("It should generate full name with prefix and suffix") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.prefixes).returning("Mr")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.suffixes).returning("I")
     generator.fullName(true, true).map(lastName => assert(lastName == "Mr John Richard I")).unsafeRunSync()
   }
 
   test("It should generate username") {
-    (random.nextInt(_: Int)).expects(1).returning(0)
-    (random.nextInt(_: Int)).expects(1).returning(0)
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.firstNames).returning("John")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.names.lastNames).returning("Richard")
     (random.nextInt(_: Int)).expects(1000).returning(45)
 
     generator.username.map(username => assert(username == "john_richard_45")).unsafeRunSync()

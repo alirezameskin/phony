@@ -1,12 +1,13 @@
 package alaki.generators
 
-import alaki.Locale
+import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
 
+import scala.language.higherKinds
 import scala.util.Random
 
-class InternetGenerator[F[_]: Monad](val random: Random)(implicit locale: Locale[F]) extends DataGenerator {
+class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale: Locale[F]) {
   private val IPV6Alphabet = "abcdefABCDEF0123456789".toList
   private val passwordAlphabet = "qwertyuiopasdfghjklmnbvcxzQWERTYUIOPASDFGHJKLMNBVCXZ123456789#-!_=%".toList
 
@@ -15,25 +16,25 @@ class InternetGenerator[F[_]: Monad](val random: Random)(implicit locale: Locale
 
   def email: F[String] =
     for {
-      name <- locale.name.map(_.firstNames).map(randomItem)
-      last <- locale.name.map(_.lastNames).map(randomItem)
-      domain <- locale.internet.map(_.emailDomains).map(randomItem)
+      name <- locale.name.map(_.firstNames).map(utility.randomItem)
+      last <- locale.name.map(_.lastNames).map(utility.randomItem)
+      domain <- locale.internet.map(_.emailDomains).map(utility.randomItem)
     } yield s"$name.$last@$domain".toLowerCase
 
   def password: F[String] =
     Random.shuffle(passwordAlphabet).take(10).mkString("").pure[F]
 
   def domain: F[String] =
-    locale.internet.map(_.domainSuffixes).map(randomItem)
+    locale.internet.map(_.domainSuffixes).map(utility.randomItem)
 
   def hostname: F[String] =
     for {
-      firstName <- locale.name.map(_.firstNames).map(randomItem)
-      domain <- locale.internet.map(_.domainSuffixes).map(randomItem)
+      firstName <- locale.name.map(_.firstNames).map(utility.randomItem)
+      domain <- locale.internet.map(_.domainSuffixes).map(utility.randomItem)
     } yield s"$firstName$domain".toLowerCase
 
   def protocol: F[String] =
-    randomItem(List("http", "https")).pure[F]
+    utility.randomItem(List("http", "https")).pure[F]
 
   def url: F[String] =
     for {
@@ -42,7 +43,7 @@ class InternetGenerator[F[_]: Monad](val random: Random)(implicit locale: Locale
     } yield s"$protocol://$host".toLowerCase
 
   def ip: F[String] =
-    (1 to 4).map(_ => random.nextInt(255)).mkString(".") match {
+    (1 to 4).map(_ => utility.nextInt(255)).mkString(".") match {
       case "0.0.0.0" | "255.255.255.255" => ip
       case address => address.pure[F]
     }

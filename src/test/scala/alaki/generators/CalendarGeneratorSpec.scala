@@ -2,7 +2,7 @@ package alaki.generators
 
 import java.util.GregorianCalendar
 
-import alaki.Locale
+import alaki.{Locale, RandomUtility}
 import alaki.data._
 import alaki.resource.{LocaleProvider, SyncLocale}
 import cats.effect.IO
@@ -21,7 +21,7 @@ class CalendarGeneratorSpec extends FunSuite with MockFactory {
   )
 
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
-  val random = mock[Random]
+  val random = mock[RandomUtility]
   val generator = new CalendarGenerator[IO](random)
 
   test("It should return a year between 1970 and 2019") {
@@ -31,12 +31,12 @@ class CalendarGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should return one day from the available day names") {
-    (random.nextInt(_: Int)).expects(2).returning(1)
+    (random.randomItem(_:Seq[String])).expects(dataProvider.calendar.days).returning("Wednesday")
     generator.day.map(day => assert(day == "Wednesday")).unsafeRunSync()
   }
 
   test("It should return a month from the available months") {
-    (random.nextInt(_: Int)).expects(3).returning(2)
+    (random.randomItem(_:Seq[String])).expects(dataProvider.calendar.months).returning("April")
     generator.month.map(month => assert(month == "April")).unsafeRunSync()
   }
 

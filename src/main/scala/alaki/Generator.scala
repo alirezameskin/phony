@@ -4,17 +4,16 @@ import alaki.generators._
 import cats.Monad
 import cats.effect.IO
 
-import scala.util.Random
-
 class Generator[F[_]](implicit A: Monad[F], locale: Locale[F]) {
-  private val random: Random = new Random()
 
-  val alphanumeric = new AlphanumericGenerator[F](random)
-  val calendar = new CalendarGenerator[F](random)
-  val internet = new InternetGenerator[F](random)
-  val lorem = new LoremGenerator[F](random)
-  val name = new NameGenerator[F](random)
-  val location = new LocationGenerator[F](random)
+  private val utility = new RandomUtility();
+
+  val alphanumeric = new AlphanumericGenerator[F](utility)
+  val calendar = new CalendarGenerator[F](utility)
+  val internet = new InternetGenerator[F](utility)
+  val lorem = new LoremGenerator[F](utility)
+  val name = new NameGenerator[F](utility)
+  val location = new LocationGenerator[F](utility)
 }
 
 object Generator {

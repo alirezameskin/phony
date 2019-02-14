@@ -1,14 +1,13 @@
 package alaki.generators
 
+import alaki.RandomUtility
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
 
-import scala.util.Random
-
 class AlphanumericGeneratorSpec extends FunSuite with MockFactory {
 
-  val random = mock[Random]
+  val random = mock[RandomUtility]
   val generator = new AlphanumericGenerator[IO](random)
 
   test("It should return one boolean if boolean method is called") {

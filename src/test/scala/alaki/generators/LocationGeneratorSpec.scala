@@ -1,13 +1,11 @@
 package alaki.generators
 
-import alaki.Locale
 import alaki.data._
 import alaki.resource.{LocaleProvider, SyncLocale}
+import alaki.{Locale, RandomUtility}
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
-
-import scala.util.Random
 
 class LocationGeneratorSpec extends FunSuite with MockFactory {
   val dataProvider = LocaleProvider(
@@ -18,7 +16,7 @@ class LocationGeneratorSpec extends FunSuite with MockFactory {
     LocationData(Vector(Country("Germany", "DE"), Country("Iran", "IR")))
   )
 
-  val random = mock[Random]
+  val random = mock[RandomUtility]
 
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
   val generator = new LocationGenerator[IO](random)
@@ -38,21 +36,21 @@ class LocationGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should select one country name from the available countries") {
-    (random.nextInt(_: Int)).expects(2).returning(1)
+    (random.randomItem(_: Seq[Country])).expects(dataProvider.location.countries).returning(Country("Iran", "IR"))
     generator.countryName
       .map(name => assert(name == "Iran"))
       .unsafeRunSync
   }
 
   test("It should select one country code from the available countries") {
-    (random.nextInt(_: Int)).expects(2).returning(1)
+    (random.randomItem(_: Seq[Country])).expects(dataProvider.location.countries).returning(Country("Iran", "IR"))
     generator.countryCode
       .map(code => assert(code == "IR"))
       .unsafeRunSync
   }
 
   test("It should select one country from the available countries") {
-    (random.nextInt(_: Int)).expects(2).returning(0)
+    (random.randomItem(_: Seq[Country])).expects(dataProvider.location.countries).returning(Country("Germany", "DE"))
     generator.country
       .map(country => assert(country == Country("Germany", "DE")))
       .unsafeRunSync

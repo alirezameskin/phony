@@ -1,23 +1,21 @@
 package alaki.generators
 
-import alaki.Locale
+import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
 
-import scala.util.Random
-
-class NameGenerator[F[_]: Monad](val random: Random)(implicit locale: Locale[F]) extends DataGenerator {
+class NameGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale: Locale[F]) {
   def firstName: F[String] =
-    locale.name.map(_.firstNames).map(randomItem)
+    locale.name.map(_.firstNames).map(utility.randomItem)
 
   def lastName: F[String] =
-    locale.name.map(_.lastNames).map(randomItem)
+    locale.name.map(_.lastNames).map(utility.randomItem)
 
   def prefix: F[String] =
-    locale.name.map(_.prefixes).map(randomItem)
+    locale.name.map(_.prefixes).map(utility.randomItem)
 
   def suffix: F[String] =
-    locale.name.map(_.suffixes).map(randomItem)
+    locale.name.map(_.suffixes).map(utility.randomItem)
 
   def fullName: F[String] = fullName(false, false)
 
@@ -31,9 +29,9 @@ class NameGenerator[F[_]: Monad](val random: Random)(implicit locale: Locale[F])
 
   def username: F[String] =
     for {
-      first <- locale.name.map(_.firstNames).map(randomItem)
-      last <- locale.name.map(_.lastNames).map(randomItem)
-      rand <- random.nextInt(1000).pure[F]
+      first <- locale.name.map(_.firstNames).map(utility.randomItem)
+      last <- locale.name.map(_.lastNames).map(utility.randomItem)
+      rand <- utility.nextInt(1000).pure[F]
     } yield s"${first}_${last}_${rand}".toLowerCase
 
   private def combine4(glue: String)(p1: String, p2: String, p3: String, p4: String) =

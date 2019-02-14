@@ -1,13 +1,11 @@
 package alaki.generators
 
-import alaki.Locale
 import alaki.data._
 import alaki.resource.{LocaleProvider, SyncLocale}
+import alaki.{Locale, RandomUtility}
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
-
-import scala.util.Random
 
 class LoremGeneratorSpec extends FunSuite with MockFactory {
   val dataProvider = LocaleProvider(
@@ -21,16 +19,21 @@ class LoremGeneratorSpec extends FunSuite with MockFactory {
   )
 
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
-  val random = mock[Random]
+  val random = mock[RandomUtility]
   val generator = new LoremGenerator[IO](random)
 
   test("It should select one word from the words list") {
-    (random.nextInt(_: Int)).expects(11).returning(0)
+    (random.randomItem(_: Seq[String])).expects(dataProvider.lorem.words).returning("back")
 
     generator.word.map(word => assert(word == "back")).unsafeRunSync()
   }
 
   test("It should return five words from the words list") {
+    (random
+      .randomItems(_: Int)(_: Seq[String]))
+      .expects(5, dataProvider.lorem.words)
+      .returning(Vector("bag", "bake", "bird", "background", "bad"))
+
     generator
       .words(5)
       .map { words =>
