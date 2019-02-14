@@ -8,6 +8,18 @@ import scala.language.higherKinds
 
 class AlphanumericGenerator[F[_]: Monad](val utility: RandomUtility) {
 
+  /**
+    * Generates custom using ascii uppercase and random integers
+    * replaces # with integer and replaces ? with Ascii character
+    *
+    * @param format
+    * @return
+    * @example custom("##??")
+    */
+  def custom(format: String): F[String] = utility.bothify(format).pure[F]
+
+  def char: F[Char] = utility.nextChar.pure[F]
+
   def boolean: F[Boolean] = utility.nextBoolean.pure[F]
 
   def float: F[Float] = utility.nextFloat.pure[F]

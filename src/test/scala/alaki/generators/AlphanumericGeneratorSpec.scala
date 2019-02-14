@@ -10,6 +10,18 @@ class AlphanumericGeneratorSpec extends FunSuite with MockFactory {
   val random = mock[RandomUtility]
   val generator = new AlphanumericGenerator[IO](random)
 
+  test("It should generate a string with ###??? format") {
+    (random.bothify(_: String)).expects("###???").returning("368ERD")
+
+    generator.custom("###???").map(code => assert(code == "368ERD"))
+  }
+
+  test("It should generate a character") {
+    (random.nextChar _).expects().returning('F')
+
+    generator.char.map(char => assert(char == 'F')).unsafeRunSync
+  }
+
   test("It should return one boolean if boolean method is called") {
     (random.nextBoolean _).expects().returning(false)
 
@@ -35,7 +47,7 @@ class AlphanumericGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should generate an integer between 100 and 600") {
-    (random.nextInt(_ : Int)).expects(500).returning(345)
+    (random.nextInt(_: Int)).expects(500).returning(345)
 
     generator.number(100, 600).map(num => assert(num == 445)).unsafeRunSync
   }

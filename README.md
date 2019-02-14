@@ -55,11 +55,13 @@ contactStream.repeatN(10).map(println).compile.drain.unsafeRunSync
 ### Alphanumeric
 
 ```scala
+  def char: F[Char]
   def boolean: F[Boolean]
   def float: F[Float]
   def number: F[Int]
   def number(max: Int)
   def number(min: Int, max: Int): F[Int]
+  def custom(format: String) //format replace # with random number and replace ? with random character
 ```
 
 ### Calendar 
