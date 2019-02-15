@@ -9,7 +9,9 @@ import org.scalatest.FunSuite
 
 class InternetGeneratorSpec extends FunSuite with MockFactory {
   val dataProvider = LocaleProvider(
-    LoremData(Vector.empty),
+    LoremData(
+      Vector("back", "background", "bad", "badly", "bag", "bake", "dolores", "et", "bind", "biological", "bird")
+    ),
     NameData(
       Vector("John", "David", "George", "Ronald"),
       Vector("Smith", "Williams", "Johnson"),
@@ -100,5 +102,11 @@ class InternetGeneratorSpec extends FunSuite with MockFactory {
         ip => assert(ip.matches("(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$"))
       )
       .unsafeRunSync
+  }
+
+  test("It should generate a hashtag") {
+    (random.nextInt(_: Int)).expects(3).returning(1)
+    (random.randomItems(_: Int)(_: Seq[String])).expects(2, dataProvider.lorem.words).returning(List("bake", "dolores"))
+    generator.hashtag.map(hashtag => assert(hashtag == "#BakeDolores")).unsafeRunSync
   }
 }

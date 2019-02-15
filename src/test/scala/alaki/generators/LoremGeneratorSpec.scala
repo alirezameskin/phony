@@ -32,7 +32,7 @@ class LoremGeneratorSpec extends FunSuite with MockFactory {
     (random
       .randomItems(_: Int)(_: Seq[String]))
       .expects(5, dataProvider.lorem.words)
-      .returning(Vector("bag", "bake", "bird", "background", "bad"))
+      .returning(List("bag", "bake", "bird", "background", "bad"))
 
     generator
       .words(5)

@@ -26,6 +26,11 @@ private[alaki] class RandomUtility {
   def randomItem[A](items: Seq[A]): A =
     items(random.nextInt(items.size))
 
-  def randomItems[A](count: Int)(items: Seq[A]): Seq[A] =
-    Random.shuffle(items).take(count)
+  def randomItems[A](count: Int)(items: Seq[A]): List[A] =
+    (1 until count).foldLeft(List.empty[A]) { (list, _) =>
+      items match {
+        case Nil => Nil
+        case array => array(nextInt(array.size)) +: list
+      }
+    }
 }

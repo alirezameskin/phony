@@ -53,4 +53,10 @@ class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale
       .map(_ => Random.shuffle(IPV6Alphabet).take(4).mkString(""))
       .mkString(":")
       .pure[F]
+
+  def hashtag: F[String] = locale.lorem.map(_.words).map { all =>
+    val size = utility.nextInt(3) + 1
+    val words = utility.randomItems(size)(all)
+    "#" + words.map(_.capitalize).mkString("")
+  }
 }

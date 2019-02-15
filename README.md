@@ -100,6 +100,7 @@ contactStream.repeatN(10).map(println).compile.drain.unsafeRunSync
   def url: F[String]
   def ip: F[String]
   def ipv6: F[String]
+  def hashtag: F[String]
 ```
 
 ### Lorem
