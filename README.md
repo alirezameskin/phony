@@ -3,7 +3,7 @@ Phony
 
 Phony is fake data generate with `cats` effect library.
 
-[![Build Status](https://travis-ci.com/alirezameskin/``alaki.svg?token=37jaimBVvHpuikyqcM5g&branch=master)](https://travis-ci.com/alirezameskin/phony)
+[![Build Status](https://travis-ci.com/alirezameskin/phony.svg?branch=master)](https://travis-ci.com/alirezameskin/phony)
 
 
 ## Quick Start
