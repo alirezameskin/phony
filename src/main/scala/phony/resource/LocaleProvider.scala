@@ -1,6 +1,6 @@
-package alaki.resource
+package phony.resource
 
-import alaki.data._
+import phony.data._
 
 case class LocaleProvider(
   lorem: LoremData,

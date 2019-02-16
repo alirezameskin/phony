@@ -1,13 +1,13 @@
-package alaki.resource
+package phony.resource
 
 import java.io.InputStream
 
-import alaki.Locale
-import alaki.data._
 import cats.effect.Sync
 import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.parser._
+import phony.Locale
+import phony.data._
 
 import scala.language.higherKinds
 import scala.util.Try

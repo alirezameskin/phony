@@ -1,10 +1,10 @@
-package alaki
+package phony
 
-import alaki.generators._
 import cats.Monad
 import cats.effect.IO
+import phony.generators._
 
-class Generator[F[_]](implicit A: Monad[F], locale: Locale[F]) {
+class Phony[F[_]](implicit A: Monad[F], locale: Locale[F]) {
 
   private val utility = new RandomUtility();
 
@@ -16,9 +16,9 @@ class Generator[F[_]](implicit A: Monad[F], locale: Locale[F]) {
   val location = new LocationGenerator[F](utility)
 }
 
-object Generator {
+object Phony {
   implicit val english: Locale[IO] = Locale.ENGLISH
-  implicit val io: Generator[IO] = new SyncGenerator[IO]
+  implicit val io: Phony[IO] = new SyncPhony[IO]
 
-  def apply[F[_]](implicit F: Generator[F], locale: Locale[F]): Generator[F] = F
+  def apply[F[_]](implicit F: Phony[F], locale: Locale[F]): Phony[F] = F
 }

@@ -1,8 +1,8 @@
-package alaki
+package phony
 
-import alaki.data._
-import alaki.resource.SyncLocale
 import cats.effect.IO
+import phony.data._
+import phony.resource.SyncLocale
 
 trait Locale[F[_]] {
   def name: F[NameData]

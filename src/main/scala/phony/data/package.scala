@@ -1,4 +1,4 @@
-package alaki
+package phony
 
 package object data {
   case class NameData(

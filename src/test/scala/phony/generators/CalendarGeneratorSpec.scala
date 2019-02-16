@@ -1,10 +1,10 @@
-package alaki.generators
+package phony.generators
 
 import java.util.GregorianCalendar
 
-import alaki.{Locale, RandomUtility}
-import alaki.data._
-import alaki.resource.{LocaleProvider, SyncLocale}
+import phony.{Locale, RandomUtility}
+import phony.data._
+import phony.resource.{LocaleProvider, SyncLocale}
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite

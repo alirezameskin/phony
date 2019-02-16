@@ -1,11 +1,11 @@
-package alaki.generators
+package phony.generators
 
 import java.text.SimpleDateFormat
 import java.util.{Date, GregorianCalendar}
 
-import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
+import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 

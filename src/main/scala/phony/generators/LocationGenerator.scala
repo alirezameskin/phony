@@ -1,9 +1,9 @@
-package alaki.generators
+package phony.generators
 
-import alaki.data.Country
-import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
+import phony.data.Country
+import phony.{Locale, RandomUtility}
 
 class LocationGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale: Locale[F]) {
   def latitude: F[String] =
