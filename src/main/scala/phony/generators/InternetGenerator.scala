@@ -1,8 +1,8 @@
-package alaki.generators
+package phony.generators
 
-import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
+import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 import scala.util.Random

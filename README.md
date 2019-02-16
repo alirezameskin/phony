@@ -1,31 +1,31 @@
-Alaki
+Phony
 ==========
 
-Alaki is fake data generate with `cats` effect library.
+Phony is fake data generate with `cats` effect library.
 
-[![Build Status](https://travis-ci.com/alirezameskin/alaki.svg?token=37jaimBVvHpuikyqcM5g&branch=master)](https://travis-ci.com/alirezameskin/alaki)
+[![Build Status](https://travis-ci.com/alirezameskin/``alaki.svg?token=37jaimBVvHpuikyqcM5g&branch=master)](https://travis-ci.com/alirezameskin/phony)
 
 
 ## Quick Start
 
-To use alaki in an existing SBT project with Scala 2.11 or a later version, add the following dependency to your build.sbt:
+To use Phony in an existing SBT project with Scala 2.11 or a later version, add the following dependency to your build.sbt:
 
 ```scala
-resolvers += "alaki" at "https://dl.bintray.com/meskin/alaki/"
+resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" % "alaki_2.12" % "0.1-snapshot"
+libraryDependencies += "com.github.alirezameskin" %% "phony" % "0.1-snapshot"
 ```
 
 ## Examples
 
 ```scala
-  import alaki.{Generator, Locale}
   import cats.effect.IO
+  import phony.{Phony, Locale}
   
   implicit val locale = Locale.ENGLISH
-  val generator = Generator[IO]
+  val phony = Phony[IO]
 
-  val bio = for (text <- generator.lorem.text) yield text
+  val bio = for (text <- phony.lorem.text) yield text
 
   println(bio.unsafeRunSync)
 ```
@@ -33,20 +33,23 @@ libraryDependencies += "com.github.alirezameskin" % "alaki_2.12" % "0.1-snapshot
 ### Using with [`fs2`](https://fs2.io/)
 
 ```scala
+import cats.effect.IO
+import fs2._
+import phony.{Locale, Phony}
+
 case class Contact(firstName :String, lastName : String, age:Int)
 
 implicit val locale = Locale.ENGLISH
-val generator = Generator[IO]
+val phony = Phony[IO]
 
 val contact = for {
-  firstName <- generator.name.firstName
-  lastName  <- generator.name.lastName
-  age       <- generator.alphanumeric.number(18, 68)
+  firstName <- phony.name.firstName
+  lastName  <- phony.name.lastName
+  age       <- phony.alphanumeric.number(18, 68)
 } yield Contact(firstName, lastName, age)
 
-val contactsStream = Stream.eval(contact)
-
-contactStream.repeatN(10).map(println).compile.drain.unsafeRunSync
+val stream = Stream.eval(contact)
+stream.repeat.take(10).map(println).compile.drain.unsafeRunSync
 
 ```
 
@@ -121,7 +124,7 @@ contactStream.repeatN(10).map(println).compile.drain.unsafeRunSync
 ```scala
   def latitude: F[String]
   def longitude: F[String]
-  def country: F[alaki.data.Country]
+  def country: F[phony.data.Country]
   def countryName: F[String]
   def countryCode: F[String]
 ```

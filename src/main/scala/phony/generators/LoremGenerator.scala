@@ -1,8 +1,8 @@
-package alaki.generators
+package phony.generators
 
-import alaki.{Locale, RandomUtility}
 import cats.Monad
 import cats.implicits._
+import phony.{Locale, RandomUtility}
 
 class LoremGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale: Locale[F]) {
   def word: F[String] =

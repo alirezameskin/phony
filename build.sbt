@@ -7,12 +7,12 @@ lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 lazy val supportedScalaVersions = List(scala212, scala211)
 
-name := "alaki"
+name := "phony"
 organization := "com.github.alirezameskin"
-homepage := Some(url("https://github.com/alireza-m/alaki"))
+homepage := Some(url("https://github.com/alirezameskin/phony"))
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 bintrayOrganization := Some("meskin")
-bintrayRepository := "alaki"
+bintrayRepository := "phony"
 
 version := "0.1-snapshot"
 scalaVersion := scala212

@@ -1,8 +1,8 @@
-package alaki.generators
+package phony.generators
 
-import alaki.data._
-import alaki.resource.{LocaleProvider, SyncLocale}
-import alaki.{Locale, RandomUtility}
+import phony.data._
+import phony.resource.{LocaleProvider, SyncLocale}
+import phony.{Locale, RandomUtility}
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite

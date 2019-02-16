@@ -1,8 +1,8 @@
-package alaki
+package phony
 
 import scala.util.Random
 
-private[alaki] class RandomUtility {
+private[phony] class RandomUtility {
   private val random: Random = new Random()
 
   def numerify(format: String): String = "#".r.replaceAllIn(format, nextInt.toString)

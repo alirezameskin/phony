@@ -1,6 +1,6 @@
-package alaki.generators
+package phony.generators
 
-import alaki.RandomUtility
+import phony.RandomUtility
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
