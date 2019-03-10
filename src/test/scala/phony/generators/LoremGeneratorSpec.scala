@@ -19,11 +19,11 @@ class LoremGeneratorSpec extends FunSuite with MockFactory {
   )
 
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
-  val random = mock[RandomUtility]
-  val generator = new LoremGenerator[IO](random)
+  implicit val random = mock[RandomUtility[IO]]
+  val generator = new LoremGenerator[IO]
 
   test("It should select one word from the words list") {
-    (random.randomItem(_: Seq[String])).expects(dataProvider.lorem.words).returning("back")
+    (random.randomItem(_: Seq[String])).expects(dataProvider.lorem.words).returning(IO("back"))
 
     generator.word.map(word => assert(word == "back")).unsafeRunSync()
   }
@@ -32,7 +32,7 @@ class LoremGeneratorSpec extends FunSuite with MockFactory {
     (random
       .randomItems(_: Int)(_: Seq[String]))
       .expects(5, dataProvider.lorem.words)
-      .returning(List("bag", "bake", "bird", "background", "bad"))
+      .returning(IO(List("bag", "bake", "bird", "background", "bad")))
 
     generator
       .words(5)

@@ -13,7 +13,7 @@ To use Phony in an existing SBT project with Scala 2.11 or a later version, add 
 ```scala
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony" % "0.1-snapshot"
+libraryDependencies += "com.github.alirezameskin" %% "phony" % "0.2-snapshot"
 ```
 
 ## Examples

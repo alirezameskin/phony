@@ -14,7 +14,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"
 bintrayOrganization := Some("meskin")
 bintrayRepository := "phony"
 
-version := "0.1-snapshot"
+version := "0.2-snapshot"
 scalaVersion := scala212
 crossScalaVersions := supportedScalaVersions
 

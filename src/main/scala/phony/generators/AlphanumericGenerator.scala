@@ -1,32 +1,38 @@
 package phony.generators
 
 import cats.Monad
-import cats.implicits._
 import phony.RandomUtility
 
 import scala.language.higherKinds
 
-class AlphanumericGenerator[F[_]: Monad](val utility: RandomUtility) {
+class AlphanumericGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
 
   /**
-    * Generates custom using ascii uppercase and random integers
-    * replaces # with integer and replaces ? with Ascii character
-    *
-    * @param format
-    * @return
-    * @example custom("##??")
-    */
-  def custom(format: String): F[String] = utility.bothify(format).pure[F]
+   * Generates custom using ascii uppercase and random integers
+   * replaces # with integer and replaces ? with Ascii character
+   *
+   * @param format
+   * @return
+   * @example custom("##??")
+   */
+  def custom(format: String): F[String] =
+    utility.bothify(format)
 
-  def char: F[Char] = utility.nextChar.pure[F]
+  def char: F[Char] =
+    utility.nextChar
 
-  def boolean: F[Boolean] = utility.nextBoolean.pure[F]
+  def boolean: F[Boolean] =
+    utility.nextBoolean
 
-  def float: F[Float] = utility.nextFloat.pure[F]
+  def float: F[Float] =
+    utility.nextFloat
 
-  def number: F[Int] = number(100000)
+  def number: F[Int] =
+    number(100000)
 
-  def number(max: Int): F[Int] = utility.nextInt(max).pure[F]
+  def number(max: Int): F[Int] =
+    utility.nextInt(max)
 
-  def number(min: Int, max: Int): F[Int] = (utility.nextInt(max - min) + min).pure[F]
+  def number(min: Int, max: Int): F[Int] =
+    implicitly[Monad[F]].map(utility.nextInt(max - min))(_ + min)
 }
