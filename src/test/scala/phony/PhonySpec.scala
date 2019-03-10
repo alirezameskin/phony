@@ -1,9 +1,9 @@
 package phony
 
-import phony.data._
-import phony.resource.{LocaleProvider, SyncLocale}
 import cats.effect.IO
 import org.scalatest.FunSuite
+import phony.data._
+import phony.resource.{LocaleProvider, SyncLocale}
 
 class PhonySpec extends FunSuite {
   val dataProvider = LocaleProvider(
@@ -14,6 +14,7 @@ class PhonySpec extends FunSuite {
     LocationData(Vector(Country("Germany", "de")))
   )
 
+  implicit val utility: RandomUtility[IO] = new SyncRandomUtility[IO]
   implicit val locale: Locale[IO] = new SyncLocale[IO](IO(dataProvider))
   val phony: Phony[IO] = new SyncPhony[IO]
 

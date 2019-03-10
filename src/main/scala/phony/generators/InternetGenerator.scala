@@ -7,7 +7,7 @@ import phony.{Locale, RandomUtility}
 import scala.language.higherKinds
 import scala.util.Random
 
-class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale: Locale[F]) {
+class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale: Locale[F]) {
   private val IPV6Alphabet = "abcdefABCDEF0123456789".toList
   private val passwordAlphabet = "qwertyuiopasdfghjklmnbvcxzQWERTYUIOPASDFGHJKLMNBVCXZ123456789#-!_=%".toList
 
@@ -16,25 +16,25 @@ class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale
 
   def email: F[String] =
     for {
-      name <- locale.name.map(_.firstNames).map(utility.randomItem)
-      last <- locale.name.map(_.lastNames).map(utility.randomItem)
-      domain <- locale.internet.map(_.emailDomains).map(utility.randomItem)
+      name <- locale.name.map(_.firstNames).flatMap(utility.randomItem)
+      last <- locale.name.map(_.lastNames).flatMap(utility.randomItem)
+      domain <- locale.internet.map(_.emailDomains).flatMap(utility.randomItem)
     } yield s"$name.$last@$domain".toLowerCase
 
   def password: F[String] =
     Random.shuffle(passwordAlphabet).take(10).mkString("").pure[F]
 
   def domain: F[String] =
-    locale.internet.map(_.domainSuffixes).map(utility.randomItem)
+    locale.internet.map(_.domainSuffixes).flatMap(utility.randomItem)
 
   def hostname: F[String] =
     for {
-      firstName <- locale.name.map(_.firstNames).map(utility.randomItem)
-      domain <- locale.internet.map(_.domainSuffixes).map(utility.randomItem)
+      firstName <- locale.name.map(_.firstNames).flatMap(utility.randomItem)
+      domain <- locale.internet.map(_.domainSuffixes).flatMap(utility.randomItem)
     } yield s"$firstName$domain".toLowerCase
 
   def protocol: F[String] =
-    utility.randomItem(List("http", "https")).pure[F]
+    utility.randomItem(List("http", "https"))
 
   def url: F[String] =
     for {
@@ -42,11 +42,16 @@ class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale
       host <- hostname
     } yield s"$protocol://$host".toLowerCase
 
-  def ip: F[String] =
-    (1 to 4).map(_ => utility.nextInt(255)).mkString(".") match {
+  def ip: F[String] = {
+    val address: F[String] = (1 to 4).toList.foldLeftM(List.empty[Int]) { (items, _) =>
+      utility.nextInt(255).map(part => items :+ part)
+    }.map(_.mkString("."))
+
+    address.flatMap {
       case "0.0.0.0" | "255.255.255.255" => ip
       case address => address.pure[F]
     }
+  }
 
   def ipv6: F[String] =
     (1 to 8)
@@ -54,9 +59,10 @@ class InternetGenerator[F[_]: Monad](val utility: RandomUtility)(implicit locale
       .mkString(":")
       .pure[F]
 
-  def hashtag: F[String] = locale.lorem.map(_.words).map { all =>
-    val size = utility.nextInt(3) + 1
-    val words = utility.randomItems(size)(all)
-    "#" + words.map(_.capitalize).mkString("")
+  def hashtag: F[String] = locale.lorem.map(_.words).flatMap { all =>
+    for {
+      size <- utility.nextInt(3)
+      words <- utility.randomItems(size + 1)(all)
+    } yield "#" + words.map(_.capitalize).mkString("")
   }
 }

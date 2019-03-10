@@ -1,36 +1,27 @@
 package phony
 
-import scala.util.Random
+import scala.language.higherKinds
 
-private[phony] class RandomUtility {
-  private val random: Random = new Random()
+trait RandomUtility[F[_]] {
+  def numerify(format: String): F[String]
 
-  def numerify(format: String): String = "#".r.replaceAllIn(format, nextInt.toString)
+  def letterify(format: String): F[String]
 
-  def letterify(format: String): String = """\?""".r.replaceAllIn(format, nextChar.toString)
+  def bothify(format: String): F[String]
 
-  def bothify(format: String) = letterify(numerify(format))
+  def nextBoolean: F[Boolean]
 
-  def nextBoolean: Boolean = random.nextBoolean
+  def nextDouble: F[Double]
 
-  def nextDouble: Double = random.nextDouble
+  def nextFloat: F[Float]
 
-  def nextFloat: Float = random.nextFloat
+  def nextChar: F[Char]
 
-  def nextChar: Char = (random.nextInt(25) + 65).toChar
+  def nextInt: F[Int]
 
-  def nextInt: Int = random.nextInt
+  def nextInt(max: Int): F[Int]
 
-  def nextInt(max: Int) = random.nextInt(max)
+  def randomItem[A](items: Seq[A]): F[A]
 
-  def randomItem[A](items: Seq[A]): A =
-    items(random.nextInt(items.size))
-
-  def randomItems[A](count: Int)(items: Seq[A]): List[A] =
-    (1 until count).foldLeft(List.empty[A]) { (list, _) =>
-      items match {
-        case Nil => Nil
-        case array => array(nextInt(array.size)) +: list
-      }
-    }
+  def randomItems[A](count: Int)(items: Seq[A]): F[List[A]]
 }
