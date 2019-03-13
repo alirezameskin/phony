@@ -1,7 +1,7 @@
 package phony.generators
 
 import java.text.SimpleDateFormat
-import java.util.{Date, GregorianCalendar}
+import java.util.{Date, GregorianCalendar, TimeZone}
 
 import cats.Monad
 import cats.implicits._
@@ -31,6 +31,9 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
       minute <- utility.nextInt(60)
     } yield "%02d".format(hour) + ":" + "%02d".format(minute)
 
+  def unixTime:F[Long] =
+    date.map(_.getTime)
+
   def date: F[Date] =
     for {
       y <- year
@@ -43,4 +46,10 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
 
   def date(format: String = "yyyy-MM-dd"): F[String] =
     date.map(d => new SimpleDateFormat(format).format(d))
+
+  def timezone: F[String] =
+    utility.randomItem(TimeZone.getAvailableIDs.toList)
+
+  def iso8601: F[String] =
+    date("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 }

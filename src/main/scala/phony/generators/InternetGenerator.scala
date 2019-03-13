@@ -5,7 +5,6 @@ import cats.implicits._
 import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
-import scala.util.Random
 
 class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale: Locale[F]) {
   private[phony] val IPV6Alphabet = "abcdefABCDEF0123456789".toList

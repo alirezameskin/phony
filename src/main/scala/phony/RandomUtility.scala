@@ -23,6 +23,8 @@ trait RandomUtility[F[_]] {
 
   def nextInt(max: Int): F[Int]
 
+  def nextLong: F[Long]
+
   def nextUUID: F[UUID]
 
   def randomItem[A](items: Seq[A]): F[A]

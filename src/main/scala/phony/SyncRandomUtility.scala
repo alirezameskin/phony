@@ -42,6 +42,9 @@ class SyncRandomUtility[F[_]: Sync] extends RandomUtility[F] {
   override def nextInt(max: Int): F[Int] =
     Sync[F].delay(random.nextInt(max))
 
+  override def nextLong: F[Long] =
+    Sync[F].delay(random.nextLong)
+
   override def nextUUID: F[UUID] =
     Sync[F].delay(java.util.UUID.randomUUID)
 

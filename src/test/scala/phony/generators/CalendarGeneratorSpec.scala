@@ -1,6 +1,6 @@
 package phony.generators
 
-import java.util.GregorianCalendar
+import java.util.{GregorianCalendar, TimeZone}
 
 import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
@@ -71,5 +71,32 @@ class CalendarGeneratorSpec extends FunSuite with MockFactory {
     (random.nextInt(_: Int)).expects(60).returning(IO(27))
 
     generator.date("yyyy-MM-dd").map(date => assert(date == "2005-12-10")).unsafeRunSync()
+  }
+
+  test("It should return a date string in iso 8601 format") {
+    (random.nextInt(_: Int)).expects(49).returning(IO(35))
+    (random.nextInt(_: Int)).expects(12).returning(IO(11))
+    (random.nextInt(_: Int)).expects(31).returning(IO(10))
+    (random.nextInt(_: Int)).expects(24).returning(IO(15))
+    (random.nextInt(_: Int)).expects(60).returning(IO(6))
+    (random.nextInt(_: Int)).expects(60).returning(IO(27))
+
+    generator.iso8601.map(date => assert(date == "2005-12-10T15:06:27.000+01:00")).unsafeRunSync()
+  }
+
+  test("It should return a unix timestamp") {
+    (random.nextInt(_: Int)).expects(49).returning(IO(35))
+    (random.nextInt(_: Int)).expects(12).returning(IO(11))
+    (random.nextInt(_: Int)).expects(31).returning(IO(10))
+    (random.nextInt(_: Int)).expects(24).returning(IO(15))
+    (random.nextInt(_: Int)).expects(60).returning(IO(6))
+    (random.nextInt(_: Int)).expects(60).returning(IO(27))
+
+    generator.unixTime.map(time => assert(time == 1134223587000L)).unsafeRunSync()
+  }
+
+  test("It should return a timezone from the available timezones") {
+    (random.randomItem(_:Seq[String])).expects(TimeZone.getAvailableIDs.toList).returning(IO("Europe/Berlin"))
+    generator.timezone.map ( timezone => assert(timezone == "Europe/Berlin") )
   }
 }

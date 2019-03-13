@@ -75,7 +75,9 @@ stream.repeat.take(10).map(println).compile.drain.unsafeRunSync
   def time24h: F[String]
   def time12h: F[String]
   def date: F[Date]
-  def date(format: String = "yyyy-MM-dd")
+  def date(format: String = "yyyy-MM-dd"): F[Date]
+  def iso8601:F[String]
+  def timezone: F[String]
 ```  
 
 ### Name
