@@ -14,10 +14,10 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
     utility.nextInt(2019 - 1970).map(_ + 1970)
 
   def day: F[String] =
-    locale.calendar.map(_.days).flatMap(utility.randomItem)
+    locale.calendar.map(_.days) >>= utility.randomItem
 
   def month: F[String] =
-    locale.calendar.map(_.months).flatMap(utility.randomItem)
+    locale.calendar.map(_.months) >>= utility.randomItem
 
   def time24h: F[String] =
     for {

@@ -8,19 +8,19 @@ import scala.language.higherKinds
 
 class LoremGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale: Locale[F]) {
   def word: F[String] =
-    locale.lorem.map(_.words).flatMap(utility.randomItem)
+    locale.lorem.map(_.words) >>= utility.randomItem
 
   def words: F[List[String]] =
-    utility.nextInt(20).map(_ + 5).flatMap(words)
+    utility.nextInt(20).map(_ + 5) >>= words
 
   def words(length: Int): F[List[String]] =
-    locale.lorem.map(_.words).flatMap(items => utility.randomItems(length)(items)).map(_.toList)
+    (locale.lorem.map(_.words) >>= (items => utility.randomItems(length)(items))).map(_.toList)
 
   def sentence: F[String] =
-    utility.nextInt(20).map(_ + 10).flatMap(sentence)
+    utility.nextInt(20).map(_ + 10) >>= sentence
 
   def text: F[String] =
-    utility.nextInt(10).map(_ + 2).flatMap(text)
+    utility.nextInt(10).map(_ + 2) >>= text
 
   def sentence(size: Int): F[String] =
     for (list <- words(size)) yield list.mkString(" ")

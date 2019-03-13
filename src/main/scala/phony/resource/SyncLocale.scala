@@ -24,7 +24,7 @@ class SyncLocale[F[_]](val dataProvider: F[LocaleProvider])(implicit A: Sync[F])
 }
 
 object SyncLocale {
-  def apply[F[_]](language: String)(implicit A: Sync[F]): SyncLocale[F] = {
+  def apply[F[_] : Sync](language: String): SyncLocale[F] = {
 
     val fileContent: F[String] = Try {
       val resource = s"/locales/$language.json"
@@ -33,7 +33,7 @@ object SyncLocale {
     }.liftTo[F]
 
     val jsonDecoder: String => F[LocaleProvider] = (content: String) =>
-      decode[LocaleProvider](content).fold(A.raiseError, A.pure)
+      decode[LocaleProvider](content).fold(Sync[F].raiseError, Sync[F].pure)
 
     new SyncLocale[F](fileContent >>= jsonDecoder)
   }
