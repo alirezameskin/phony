@@ -23,10 +23,9 @@ libraryDependencies += "com.github.alirezameskin" %% "phony" % "0.2.1-snapshot"
   import phony.{Phony, Locale}
   
   implicit val locale = Locale.ENGLISH
-  val phony = Phony[IO]
-
-  val bio = for (text <- phony.lorem.text) yield text
-
+  
+  val bio = Phony[IO].lorem.text
+  
   println(bio.unsafeRunSync)
 ```
 
