@@ -16,21 +16,21 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
 
   def email: F[String] =
     for {
-      name <- locale.name.map(_.firstNames).flatMap(utility.randomItem)
-      last <- locale.name.map(_.lastNames).flatMap(utility.randomItem)
-      domain <- locale.internet.map(_.emailDomains).flatMap(utility.randomItem)
+      name <- locale.name.map(_.firstNames) >>= utility.randomItem
+      last <- locale.name.map(_.lastNames) >>= utility.randomItem
+      domain <- locale.internet.map(_.emailDomains) >>= utility.randomItem
     } yield s"$name.$last@$domain".toLowerCase
 
   def password: F[String] =
     Random.shuffle(passwordAlphabet).take(10).mkString("").pure[F]
 
   def domain: F[String] =
-    locale.internet.map(_.domainSuffixes).flatMap(utility.randomItem)
+    locale.internet.map(_.domainSuffixes) >>= utility.randomItem
 
   def hostname: F[String] =
     for {
-      firstName <- locale.name.map(_.firstNames).flatMap(utility.randomItem)
-      domain <- locale.internet.map(_.domainSuffixes).flatMap(utility.randomItem)
+      firstName <- locale.name.map(_.firstNames) >>= utility.randomItem
+      domain <- locale.internet.map(_.domainSuffixes) >>= utility.randomItem
     } yield s"$firstName$domain".toLowerCase
 
   def protocol: F[String] =
@@ -47,7 +47,7 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
       utility.nextInt(255).map(part => items :+ part)
     }.map(_.mkString("."))
 
-    address.flatMap {
+    address >>= {
       case "0.0.0.0" | "255.255.255.255" => ip
       case address => address.pure[F]
     }
@@ -59,7 +59,7 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
       .mkString(":")
       .pure[F]
 
-  def hashtag: F[String] = locale.lorem.map(_.words).flatMap { all =>
+  def hashtag: F[String] = locale.lorem.map(_.words) >>= { all =>
     for {
       size <- utility.nextInt(3)
       words <- utility.randomItems(size + 1)(all)

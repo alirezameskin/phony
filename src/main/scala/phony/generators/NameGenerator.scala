@@ -8,16 +8,16 @@ import scala.language.higherKinds
 
 class NameGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale: Locale[F]) {
   def firstName: F[String] =
-    locale.name.map(_.firstNames).flatMap(utility.randomItem)
+    locale.name.map(_.firstNames) >>= utility.randomItem
 
   def lastName: F[String] =
-    locale.name.map(_.lastNames).flatMap(utility.randomItem)
+    locale.name.map(_.lastNames) >>= utility.randomItem
 
   def prefix: F[String] =
-    locale.name.map(_.prefixes).flatMap(utility.randomItem)
+    locale.name.map(_.prefixes) >>= utility.randomItem
 
   def suffix: F[String] =
-    locale.name.map(_.suffixes).flatMap(utility.randomItem)
+    locale.name.map(_.suffixes) >>= utility.randomItem
 
   def fullName: F[String] =
     fullName(false, false)
@@ -32,8 +32,8 @@ class NameGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale:
 
   def username: F[String] =
     for {
-      first <- locale.name.map(_.firstNames).flatMap(utility.randomItem)
-      last <- locale.name.map(_.lastNames).flatMap(utility.randomItem)
+      first <- locale.name.map(_.firstNames) >>= utility.randomItem
+      last <- locale.name.map(_.lastNames) >>= utility.randomItem
       rand <- utility.nextInt(1000)
     } yield s"${first}_${last}_${rand}".toLowerCase
 
