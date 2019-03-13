@@ -20,25 +20,25 @@ class SyncRandomUtility[F[_]: Sync] extends RandomUtility[F] {
     }
 
   override def bothify(format: String): F[String] =
-    letterify(format).flatMap(numerify)
+    letterify(format) >>= numerify
 
   override def nextBoolean: F[Boolean] =
-    random.nextBoolean.pure[F]
+    Sync[F].delay(random.nextBoolean)
 
   override def nextDouble: F[Double] =
-    random.nextDouble.pure[F]
+    Sync[F].delay(random.nextDouble)
 
   override def nextFloat: F[Float] =
-    random.nextFloat.pure[F]
+    Sync[F].delay(random.nextFloat)
 
   override def nextChar: F[Char] =
-    (random.nextInt(25) + 65).toChar.pure[F]
+    Sync[F].delay(random.nextInt(25) + 65).map(_.toChar)
 
   override def nextInt: F[Int] =
-    random.nextInt.pure[F]
+    Sync[F].delay(random.nextInt)
 
   override def nextInt(max: Int): F[Int] =
-    random.nextInt(max).pure[F]
+    Sync[F].delay(random.nextInt(max))
 
   override def randomItem[A](items: Seq[A]): F[A] =
     nextInt(items.size).map(items(_))
