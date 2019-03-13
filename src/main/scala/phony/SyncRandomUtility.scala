@@ -1,5 +1,7 @@
 package phony
 
+import java.util.UUID
+
 import cats.effect.Sync
 import cats.implicits._
 
@@ -39,6 +41,9 @@ class SyncRandomUtility[F[_]: Sync] extends RandomUtility[F] {
 
   override def nextInt(max: Int): F[Int] =
     Sync[F].delay(random.nextInt(max))
+
+  override def nextUUID: F[UUID] =
+    Sync[F].delay(java.util.UUID.randomUUID)
 
   override def randomItem[A](items: Seq[A]): F[A] =
     nextInt(items.size).map(items(_))

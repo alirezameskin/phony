@@ -1,5 +1,7 @@
 package phony
 
+import java.util.UUID
+
 import scala.language.higherKinds
 
 trait RandomUtility[F[_]] {
@@ -20,6 +22,8 @@ trait RandomUtility[F[_]] {
   def nextInt: F[Int]
 
   def nextInt(max: Int): F[Int]
+
+  def nextUUID: F[UUID]
 
   def randomItem[A](items: Seq[A]): F[A]
 

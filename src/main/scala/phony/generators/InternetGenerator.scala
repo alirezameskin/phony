@@ -8,11 +8,11 @@ import scala.language.higherKinds
 import scala.util.Random
 
 class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], locale: Locale[F]) {
-  private val IPV6Alphabet = "abcdefABCDEF0123456789".toList
-  private val passwordAlphabet = "qwertyuiopasdfghjklmnbvcxzQWERTYUIOPASDFGHJKLMNBVCXZ123456789#-!_=%".toList
+  private[phony] val IPV6Alphabet = "abcdefABCDEF0123456789".toList
+  private[phony] val passwordAlphabet = "qwertyuiopasdfghjklmnbvcxzQWERTYUIOPASDFGHJKLMNBVCXZ123456789#-!_=%".toList
 
   def uuid: F[String] =
-    java.util.UUID.randomUUID.toString.pure[F]
+    utility.nextUUID.map(_.toString)
 
   def email: F[String] =
     for {
@@ -22,7 +22,7 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
     } yield s"$name.$last@$domain".toLowerCase
 
   def password: F[String] =
-    Random.shuffle(passwordAlphabet).take(10).mkString("").pure[F]
+    utility.randomItems(10)(passwordAlphabet).map(_.mkString(""))
 
   def domain: F[String] =
     locale.internet.map(_.domainSuffixes) >>= utility.randomItem
@@ -55,9 +55,11 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
 
   def ipv6: F[String] =
     (1 to 8)
-      .map(_ => Random.shuffle(IPV6Alphabet).take(4).mkString(""))
-      .mkString(":")
-      .pure[F]
+      .toList
+      .foldLeftM(List.empty[String]){ (list:List[String], _) =>
+        utility.randomItems(4)(IPV6Alphabet).map(_.mkString("")).map(item => item +: list)
+      }
+      .map(_.mkString(":"))
 
   def hashtag: F[String] = locale.lorem.map(_.words) >>= { all =>
     for {

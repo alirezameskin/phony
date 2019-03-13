@@ -7,6 +7,8 @@ import cats.effect.IO
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
 
+import scala.util.Random
+
 class InternetGeneratorSpec extends FunSuite with MockFactory {
   val dataProvider = LocaleProvider(
     LoremData(
@@ -35,13 +37,17 @@ class InternetGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should generate password") {
+    val pass = Random.shuffle(generator.passwordAlphabet).take(10)
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(10, generator.passwordAlphabet).returning(IO(pass))
     generator.password.map(pass => assert(pass.size == 10)).unsafeRunSync
   }
 
   test("It should generate a valid UUID") {
+    val uuid = java.util.UUID.randomUUID()
+    (random.nextUUID _).expects().returning(IO(uuid))
     generator.uuid
       .map(
-        uuid => assert(uuid.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"))
+        guuid => assert(guuid == uuid.toString)
       )
       .unsafeRunSync
   }
@@ -97,9 +103,18 @@ class InternetGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should generate a vaid IP v6") {
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('a', '5', '3', 'A')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('b', '4', '1', 'A')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('a', '5', '3', 'B')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('b', '5', 'c', 'F')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('a', '8', '3', 'D')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('b', '6', 'b', 'C')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('9', '5', 'a', 'e')))
+    (random.randomItems(_:Int)(_:Seq[Char])).expects(4, generator.IPV6Alphabet).returning(IO(List('6', '5', '3', '8')))
+
     generator.ipv6
       .map(
-        ip => assert(ip.matches("(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$"))
+        ip => assert(ip == "6538:95ae:b6bC:a83D:b5cF:a53B:b41A:a53A")
       )
       .unsafeRunSync
   }
