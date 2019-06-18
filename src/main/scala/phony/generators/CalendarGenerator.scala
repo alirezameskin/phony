@@ -50,6 +50,13 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F], loc
   def timezone: F[String] =
     utility.randomItem(TimeZone.getAvailableIDs.toList)
 
-  def iso8601: F[String] =
-    date("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+  def iso8601: F[String] = for {
+    zone <- timezone
+    d <- date
+  } yield {
+    val formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    formatter.setTimeZone(TimeZone.getTimeZone(zone))
+
+    formatter.format(d)
+  }
 }

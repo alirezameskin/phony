@@ -74,6 +74,7 @@ class CalendarGeneratorSpec extends FunSuite with MockFactory {
   }
 
   test("It should return a date string in iso 8601 format") {
+    (random.randomItem(_:Seq[String])).expects(TimeZone.getAvailableIDs.toList).returning(IO("Europe/Berlin"))
     (random.nextInt(_: Int)).expects(49).returning(IO(35))
     (random.nextInt(_: Int)).expects(12).returning(IO(11))
     (random.nextInt(_: Int)).expects(31).returning(IO(10))
@@ -81,7 +82,7 @@ class CalendarGeneratorSpec extends FunSuite with MockFactory {
     (random.nextInt(_: Int)).expects(60).returning(IO(6))
     (random.nextInt(_: Int)).expects(60).returning(IO(27))
 
-    generator.iso8601.map(date => assert(date == "2005-12-10T15:06:27.000+01:00")).unsafeRunSync()
+    generator.iso8601.map(date => assert(date == "2005-12-10T15:06:27+01:00")).unsafeRunSync()
   }
 
   test("It should return a unix timestamp") {
