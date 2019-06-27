@@ -1,55 +1,81 @@
 Phony
 ==========
 
-Phony is fake data generate with `cats` effect library.
+Phony is fake data generate with `cats` library.
 
 [![Build Status](https://travis-ci.com/alirezameskin/phony.svg?branch=master)](https://travis-ci.com/alirezameskin/phony)
 
 
 ## Quick Start
 
-To use Phony in an existing SBT project with Scala 2.11 or a later version, add the following dependency to your build.sbt:
+To use Phony in an existing SBT project with Scala 2.11 and 2.12, add the following dependency to your build.sbt:
 
-```scala
+```sbtshell
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony" % "0.2.1-snapshot"
+libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.3.0-snapshot"
 ```
 
 ## Examples
 
 ```scala
+  import phony.Phony
+  import scala.util.Try
+  import phony.instances.try_.languages.ENGLISH
+  import phony.instances.try_._
+
+  val bio = Phony[Try].lorem.text
+  println(bio)
+```
+
+```scala
+
+  import phony.Phony
+  import phony.instances.either.languages.ENGLISH
+  import phony.instances.either._
+
+  type EitherA[A] = Either[Throwable, A]
+  val bio = Phony[EitherA].lorem.text
+  println(bio)
+```
+
+### Using with [`cats-effect`](https://typelevel.org/cats-effect/)
+
+```sbtshell
+resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
+
+libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.0-snapshot"
+```
+
+```scala
   import cats.effect.IO
-  import phony.{Phony, Locale}
-  
-  implicit val locale = Locale.ENGLISH
-  
+  import phony.Phony
+  import phony.cats.effect.instances.io.languages.ENGLISH
+  import phony.cats.effect.instances.io._
+
   val bio = Phony[IO].lorem.text
-  
-  println(bio.unsafeRunSync)
+  println(bio.unsafeRunSync())
 ```
 
 ### Using with [`fs2`](https://fs2.io/)
 
 ```scala
-import cats.effect.IO
-import fs2._
-import phony.{Locale, Phony}
+  import cats.effect.IO
+  import fs2._
+  import phony.Phony
+  import phony.cats.effect.instances.io.languages.ENGLISH
+  import phony.cats.effect.instances.io._
 
-case class Contact(firstName :String, lastName : String, age:Int)
+  case class Contact(firstName :String, lastName : String, age:Int)
 
-implicit val locale = Locale.ENGLISH
-val phony = Phony[IO]
+  val contact = for {
+    firstName <- Phony[IO].name.firstName
+    lastName  <- Phony[IO].name.lastName
+    age       <- Phony[IO].alphanumeric.number(18, 68)
+  } yield Contact(firstName, lastName, age)
 
-val contact = for {
-  firstName <- phony.name.firstName
-  lastName  <- phony.name.lastName
-  age       <- phony.alphanumeric.number(18, 68)
-} yield Contact(firstName, lastName, age)
-
-val stream = Stream.eval(contact)
-stream.repeat.take(10).map(println).compile.drain.unsafeRunSync
-
+  val stream = Stream.eval(contact)
+  stream.repeat.take(10).map(println).compile.drain.unsafeRunSync
 ```
 
 ## Generators
@@ -75,7 +101,9 @@ stream.repeat.take(10).map(println).compile.drain.unsafeRunSync
   def time24h: F[String]
   def time12h: F[String]
   def date: F[Date]
-  def date(format: String = "yyyy-MM-dd")
+  def date(format: String = "yyyy-MM-dd"): F[Date]
+  def iso8601:F[String]
+  def timezone: F[String]
 ```  
 
 ### Name
