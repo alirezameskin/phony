@@ -4,6 +4,7 @@ Phony
 Phony is fake data generate with `cats` library.
 
 [![Build Status](https://travis-ci.com/alirezameskin/phony.svg?branch=master)](https://travis-ci.com/alirezameskin/phony)
+[![codecov](https://codecov.io/gh/alirezameskin/phony/branch/master/graph/badge.svg)](https://codecov.io/gh/alirezameskin/phony)
 
 
 ## Quick Start
