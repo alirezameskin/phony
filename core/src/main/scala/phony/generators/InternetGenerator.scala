@@ -2,7 +2,7 @@ package phony.generators
 
 import cats.Monad
 import cats.implicits._
-import phony.{Locale, RandomUtility}
+import phony.RandomUtility
 
 import scala.language.higherKinds
 
@@ -42,9 +42,11 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
     } yield s"$protocol://$host".toLowerCase
 
   def ip: F[String] = {
-    val address: F[String] = (1 to 4).toList.foldLeftM(List.empty[Int]) { (items, _) =>
-      utility.int(255).map(part => items :+ part)
-    }.map(_.mkString("."))
+    val address: F[String] = (1 to 4).toList
+      .foldLeftM(List.empty[Int]) { (items, _) =>
+        utility.int(255).map(part => items :+ part)
+      }
+      .map(_.mkString("."))
 
     address >>= {
       case "0.0.0.0" | "255.255.255.255" => ip
@@ -53,9 +55,8 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
   }
 
   def ipv6: F[String] =
-    (1 to 8)
-      .toList
-      .foldLeftM(List.empty[String]){ (list:List[String], _) =>
+    (1 to 8).toList
+      .foldLeftM(List.empty[String]) { (list: List[String], _) =>
         utility.randomItems(4)(IPV6Alphabet).map(_.mkString("")).map(item => item +: list)
       }
       .map(_.mkString(":"))

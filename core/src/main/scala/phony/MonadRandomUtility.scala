@@ -3,7 +3,7 @@ package phony
 import java.util.UUID
 
 import _root_.cats.implicits._
-import cats.{Monad, MonadError}
+import cats.Monad
 
 import scala.language.higherKinds
 import scala.util.Random

@@ -20,21 +20,22 @@ Global / crossScalaVersions := supportedScalaVersions
 Global / coverageEnabled := true
 
 lazy val core = (project in file("core"))
-    .settings(
-      name := "phony-core",
-      bintrayOrganization := Some("meskin"),
-      bintrayRepository := "phony",
-      libraryDependencies ++= Seq(
-        "org.typelevel" %% "cats-core"     % catsVersion,
-        "io.circe"      %% "circe-core"    % circeVersion,
-        "io.circe"      %% "circe-generic" % circeVersion,
-        "io.circe"      %% "circe-parser"  % circeVersion,
-        "org.scalatest" %% "scalatest"     % scalaTestVersion % Test,
-      ),
-      addCompilerPlugin("org.typelevel" % "kind-projector" % "0.10.3" cross CrossVersion.binary)
-    )
+  .settings(Settings.commonSettings)
+  .settings(
+    name := "phony-core",
+    bintrayOrganization := Some("meskin"),
+    bintrayRepository := "phony",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core"     % catsVersion,
+      "io.circe"      %% "circe-core"    % circeVersion,
+      "io.circe"      %% "circe-generic" % circeVersion,
+      "io.circe"      %% "circe-parser"  % circeVersion,
+      "org.scalatest" %% "scalatest"     % scalaTestVersion % Test,
+    ),
+  )
 
 lazy val catsEffect = (project in file ("cats-effect"))
+  .settings(Settings.commonSettings)
   .settings(
     moduleName := "phony-cats-effect",
     bintrayOrganization := Some("meskin"),
@@ -55,5 +56,4 @@ lazy val root = (project in file("."))
     publish := {},
     bintrayUnpublish := {}
   )
-
 

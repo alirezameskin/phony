@@ -2,8 +2,8 @@ package phony.generators
 
 import cats.Monad
 import cats.implicits._
+import phony.RandomUtility
 import phony.data.Country
-import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 

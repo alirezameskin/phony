@@ -2,7 +2,7 @@ package phony.generators
 
 import cats.Monad
 import cats.implicits._
-import phony.{Locale, RandomUtility}
+import phony.RandomUtility
 
 import scala.language.higherKinds
 

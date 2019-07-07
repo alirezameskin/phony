@@ -37,7 +37,7 @@ object DefaultLocale {
   }
 
   private def toJson(content: String) =
-    decode[LocaleProvider](content).leftMap { ex =>
+    decode[LocaleProvider](content).leftMap { _ =>
       new RuntimeException(s"Invalid Json")
     }
 
@@ -50,7 +50,7 @@ object DefaultLocale {
   private[phony] def resource(language: String): Either[Throwable, InputStream] =
     Try(resourceUrl(language).openStream) match {
       case Success(value) => Right(value)
-      case Failure(exception) => Left(new RuntimeException(s"Invalid Resource for language ${language}"))
+      case Failure(_) => Left(new RuntimeException(s"Invalid Resource for language ${language}"))
     }
 
   private[phony] def resourceUrl(language: String) =

@@ -48,7 +48,7 @@ class InternetGeneratorSpec extends FunSuite {
   }
 
   test("It should generate a valid hostname") {
-    val hostname = generator.hostname.success.value
+    generator.hostname.success.value should fullyMatch regex """(john|david|george|ronald)\.(co|com)"""
   }
 
   test("It should return https") {

@@ -5,7 +5,7 @@ import java.util.{Date, GregorianCalendar, TimeZone}
 
 import cats.Monad
 import cats.implicits._
-import phony.{Locale, RandomUtility}
+import phony.RandomUtility
 
 import scala.language.higherKinds
 
@@ -31,7 +31,7 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
       minute <- utility.int(60)
     } yield "%02d".format(hour) + ":" + "%02d".format(minute)
 
-  def unixTime:F[Long] =
+  def unixTime: F[Long] =
     date.map(_.getTime)
 
   def date: F[Date] =
@@ -50,13 +50,14 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
   def timezone: F[String] =
     utility.randomItem(TimeZone.getAvailableIDs.toList)
 
-  def iso8601: F[String] = for {
-    zone <- timezone
-    d <- date
-  } yield {
-    val formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
-    formatter.setTimeZone(TimeZone.getTimeZone(zone))
+  def iso8601: F[String] =
+    for {
+      zone <- timezone
+      d <- date
+    } yield {
+      val formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+      formatter.setTimeZone(TimeZone.getTimeZone(zone))
 
-    formatter.format(d)
-  }
+      formatter.format(d)
+    }
 }

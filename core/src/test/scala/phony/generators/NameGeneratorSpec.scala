@@ -1,9 +1,9 @@
 package phony.generators
 
 import cats.implicits._
+import org.scalatest.FunSuite
 import org.scalatest.Matchers._
 import org.scalatest.TryValues._
-import org.scalatest.{FunSuite, _}
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import phony.{Locale, MonadRandomUtility}
@@ -57,6 +57,6 @@ class NameGeneratorSpec extends FunSuite {
   }
 
   test("It should generate username") {
-    generator.username.success.value should fullyMatch regex "john_richard_([0-9]+)"
+    (generator.username.success.value should fullyMatch).regex("john_richard_([0-9]+)")
   }
 }

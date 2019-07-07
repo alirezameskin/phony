@@ -1,9 +1,9 @@
 package phony.generators
 
 import cats.implicits._
+import org.scalatest.FunSuite
 import org.scalatest.Matchers._
 import org.scalatest.TryValues._
-import org.scalatest.{FunSuite, _}
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import phony.{Locale, MonadRandomUtility}
@@ -19,17 +19,16 @@ class LocationGeneratorSpec extends FunSuite {
     LocationData(Vector(Country("Germany", "DE"), Country("Iran", "IR")))
   )
 
-
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))
   implicit val random = new MonadRandomUtility[Try]
   val generator = new LocationGenerator[Try]
 
   test("It should generate a latitude") {
-    generator.latitude.success.value should fullyMatch regex "[-+]?([0-9]*\\.[0-9]+|[0-9]+)."
+    (generator.latitude.success.value should fullyMatch).regex("[-+]?([0-9]*\\.[0-9]+|[0-9]+).")
   }
 
   test("It should generate a longitude") {
-    generator.longitude.success.value should fullyMatch regex "[-+]?([0-9]*\\.[0-9]+|[0-9]+)."
+    (generator.longitude.success.value should fullyMatch).regex("[-+]?([0-9]*\\.[0-9]+|[0-9]+).")
   }
 
   test("It should select one country name from the available countries") {
