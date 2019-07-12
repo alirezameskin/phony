@@ -91,6 +91,8 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.
   def number(max: Int)
   def number(min: Int, max: Int): F[Int]
   def custom(format: String) //format replace # with random number and replace ? with random character
+  def hash: F[String]
+  def hash(length: Int): F[String]
 ```
 
 ### Calendar 
@@ -107,7 +109,7 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.
   def timezone: F[String]
 ```  
 
-### Name
+### Contact 
 
 ```scala
   def firstName: F[String]
@@ -117,6 +119,8 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.
   def fullName: F[String]
   def fullName(withPrefix: Boolean = false, withSuffix: Boolean = false): F[String]
   def username: F[String]
+  def phone: F[String]
+  def cellPhone: F[String]
 ```
 
 ### Internet
@@ -155,5 +159,6 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.
   def country: F[phony.data.Country]
   def countryName: F[String]
   def countryCode: F[String]
+  def postalCode: F[String]
 ```
 

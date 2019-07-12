@@ -5,7 +5,7 @@ import phony.cats.effect.{SyncLocale, SyncRandomUtility}
 import phony.{Locale, Phony, RandomUtility}
 
 trait IOInstances {
-  implicit def utility(implicit l: Locale[IO]): RandomUtility[IO] = new SyncRandomUtility[IO]()
+  implicit def utility: RandomUtility[IO] = new SyncRandomUtility[IO]()
 
   implicit def io(implicit locale: Locale[IO]): Phony[IO] = new Phony[IO]
 

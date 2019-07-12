@@ -5,30 +5,30 @@ import java.util.{Date, GregorianCalendar, TimeZone}
 
 import cats.Monad
 import cats.implicits._
-import phony.RandomUtility
+import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 
-class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
+class CalendarGenerator[F[_]: Monad: Locale: RandomUtility] {
   def year: F[Int] =
-    Monad[F].map(utility.int(2025 - 1970))(_ + 1970)
+    RandomUtility[F].int(1970, 2025)
 
   def day: F[String] =
-    utility.calendar.map(_.days) >>= utility.randomItem
+    Locale[F].calendar.map(_.days) >>= RandomUtility[F].randomItem
 
   def month: F[String] =
-    utility.calendar.map(_.months) >>= utility.randomItem
+    Locale[F].calendar.map(_.months) >>= RandomUtility[F].randomItem
 
   def time24h: F[String] =
     for {
-      hour <- utility.int(24)
-      minute <- utility.int(60)
+      hour <- RandomUtility[F].int(24)
+      minute <- RandomUtility[F].int(60)
     } yield "%02d".format(hour) + ":" + "%02d".format(minute)
 
   def time12h: F[String] =
     for {
-      hour <- utility.int(12)
-      minute <- utility.int(60)
+      hour <- RandomUtility[F].int(12)
+      minute <- RandomUtility[F].int(60)
     } yield "%02d".format(hour) + ":" + "%02d".format(minute)
 
   def unixTime: F[Long] =
@@ -37,18 +37,18 @@ class CalendarGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
   def date: F[Date] =
     for {
       y <- year
-      m <- utility.int(12)
-      d <- utility.int(31)
-      h <- utility.int(24)
-      i <- utility.int(60)
-      s <- utility.int(60)
+      m <- RandomUtility[F].int(12)
+      d <- RandomUtility[F].int(31)
+      h <- RandomUtility[F].int(24)
+      i <- RandomUtility[F].int(60)
+      s <- RandomUtility[F].int(60)
     } yield new GregorianCalendar(y, m, d, h, i, s).getTime
 
   def date(format: String = "yyyy-MM-dd"): F[String] =
     date.map(d => new SimpleDateFormat(format).format(d))
 
   def timezone: F[String] =
-    utility.randomItem(TimeZone.getAvailableIDs.toList)
+    RandomUtility[F].randomItem(TimeZone.getAvailableIDs.toList)
 
   def iso8601: F[String] =
     for {

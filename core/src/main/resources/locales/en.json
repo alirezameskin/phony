@@ -371,6 +371,11 @@
       {"name": "Yemen", "code": "YE"},
       {"name": "Zambia", "code": "ZM"},
       {"name": "Zimbabwe", "code": "ZW"}
-    ]
+    ],
+    "postcodeFormats": ["#####"]
+  },
+  "contact" : {
+    "phoneNumberFormats" : ["##-######", "###-#######"],
+    "cellPhoneFormats" : ["0##-#######"]
   }
 }

@@ -7,5 +7,6 @@ case class LocaleProvider(
   names: NameData,
   internet: InternetData,
   calendar: CalendarData,
-  location: LocationData
+  location: LocationData,
+  contact: ContactData
 )

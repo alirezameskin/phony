@@ -2,22 +2,22 @@ package phony.generators
 
 import cats.Monad
 import cats.implicits._
-import phony.RandomUtility
+import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 
-class NameGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
+class ContactGenerator[F[_]: Monad: Locale: RandomUtility] {
   def firstName: F[String] =
-    utility.name.map(_.firstNames) >>= utility.randomItem
+    Locale[F].name.map(_.firstNames) >>= RandomUtility[F].randomItem
 
   def lastName: F[String] =
-    utility.name.map(_.lastNames) >>= utility.randomItem
+    Locale[F].name.map(_.lastNames) >>= RandomUtility[F].randomItem
 
   def prefix: F[String] =
-    utility.name.map(_.prefixes) >>= utility.randomItem
+    Locale[F].name.map(_.prefixes) >>= RandomUtility[F].randomItem
 
   def suffix: F[String] =
-    utility.name.map(_.suffixes) >>= utility.randomItem
+    Locale[F].name.map(_.suffixes) >>= RandomUtility[F].randomItem
 
   def fullName: F[String] =
     fullName(false, false)
@@ -32,10 +32,24 @@ class NameGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
 
   def username: F[String] =
     for {
-      first <- utility.name.map(_.firstNames) >>= utility.randomItem
-      last <- utility.name.map(_.lastNames) >>= utility.randomItem
-      rand <- utility.int(1000)
+      first <- Locale[F].name.map(_.firstNames) >>= RandomUtility[F].randomItem
+      last <- Locale[F].name.map(_.lastNames) >>= RandomUtility[F].randomItem
+      rand <- RandomUtility[F].int(1000)
     } yield s"${first}_${last}_${rand}".toLowerCase
+
+  def phone: F[String] =
+    for {
+      contact <- Locale[F].contact
+      format <- RandomUtility[F].randomItem(contact.phoneNumberFormats)
+      result <- RandomUtility[F].numerify(format)
+    } yield result
+
+  def cellPhone: F[String] =
+    for {
+      contact <- Locale[F].contact
+      format <- RandomUtility[F].randomItem(contact.cellPhoneFormats)
+      result <- RandomUtility[F].numerify(format)
+    } yield result
 
   private def combine4(glue: String)(p1: String, p2: String, p3: String, p4: String): String =
     List(p1, p2, p3, p4).mkString(glue).trim

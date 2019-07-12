@@ -23,7 +23,8 @@ class InternetGeneratorSpec extends FunSuite {
     ),
     InternetData(Vector("Yahoo.com", "gmail.com"), Vector(".co", ".com")),
     CalendarData(Vector.empty, Vector.empty),
-    LocationData(Vector.empty)
+    LocationData(Vector.empty, Vector.empty),
+    ContactData(Vector.empty, Vector.empty)
   )
 
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))

@@ -17,12 +17,13 @@ class NameGeneratorSpec extends FunSuite {
     NameData(Vector("John"), Vector("Richard"), Vector("Mr"), Vector("I")),
     InternetData(Vector.empty, Vector.empty),
     CalendarData(Vector.empty, Vector.empty),
-    LocationData(Vector.empty)
+    LocationData(Vector.empty, Vector.empty),
+    ContactData(Vector.empty, Vector.empty)
   )
 
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))
   implicit val random = new MonadRandomUtility[Try]
-  val generator = new NameGenerator[Try]
+  val generator = new ContactGenerator[Try]
 
   test("It should generate firstName") {
     generator.firstName.success.value shouldBe "John"

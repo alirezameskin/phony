@@ -16,7 +16,8 @@ class LocationGeneratorSpec extends FunSuite {
     NameData(Vector.empty, Vector.empty, Vector.empty, Vector.empty),
     InternetData(Vector.empty, Vector.empty),
     CalendarData(Vector.empty, Vector.empty),
-    LocationData(Vector(Country("Germany", "DE"), Country("Iran", "IR")))
+    LocationData(Vector(CountryData("Germany", "DE"), CountryData("Iran", "IR")), Vector.empty),
+    ContactData(Vector.empty, Vector.empty)
   )
 
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))
@@ -44,6 +45,6 @@ class LocationGeneratorSpec extends FunSuite {
 
   test("It should select one country from the available countries") {
     val country = generator.country.success.value
-    assert(country == Country("Germany", "DE") || country == Country("Iran", "IR"))
+    assert(country == CountryData("Germany", "DE") || country == CountryData("Iran", "IR"))
   }
 }

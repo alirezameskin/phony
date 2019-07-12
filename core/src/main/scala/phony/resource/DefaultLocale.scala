@@ -22,6 +22,8 @@ class DefaultLocale[F[_]: Functor](val dataProvider: F[LocaleProvider]) extends 
   override def location: F[LocationData] = dataProvider.map(_.location)
 
   override def lorem: F[LoremData] = dataProvider.map(_.lorem)
+
+  override def contact: F[ContactData] = dataProvider.map(_.contact)
 }
 
 object DefaultLocale {

@@ -2,11 +2,12 @@ package phony.generators
 
 import cats.Monad
 import cats.implicits._
-import phony.RandomUtility
+import phony.{Locale, RandomUtility}
 
 import scala.language.higherKinds
 
-class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
+class InternetGenerator[F[_]: Monad: RandomUtility: Locale] {
+  private val utility = RandomUtility[F]
   private[phony] val IPV6Alphabet = "abcdefABCDEF0123456789".toList
   private[phony] val passwordAlphabet = "qwertyuiopasdfghjklmnbvcxzQWERTYUIOPASDFGHJKLMNBVCXZ123456789#-!_=%".toList
 
@@ -15,21 +16,21 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
 
   def email: F[String] =
     for {
-      name <- utility.name.map(_.firstNames) >>= utility.randomItem
-      last <- utility.name.map(_.lastNames) >>= utility.randomItem
-      domain <- utility.internet.map(_.emailDomains) >>= utility.randomItem
+      name <- Locale[F].name.map(_.firstNames) >>= utility.randomItem
+      last <- Locale[F].name.map(_.lastNames) >>= utility.randomItem
+      domain <- Locale[F].internet.map(_.emailDomains) >>= utility.randomItem
     } yield s"$name.$last@$domain".toLowerCase
 
   def password: F[String] =
     utility.randomItems(10)(passwordAlphabet).map(_.mkString(""))
 
   def domain: F[String] =
-    utility.internet.map(_.domainSuffixes) >>= utility.randomItem
+    Locale[F].internet.map(_.domainSuffixes) >>= utility.randomItem
 
   def hostname: F[String] =
     for {
-      firstName <- utility.name.map(_.firstNames) >>= utility.randomItem
-      domain <- utility.internet.map(_.domainSuffixes) >>= utility.randomItem
+      firstName <- Locale[F].name.map(_.firstNames) >>= utility.randomItem
+      domain <- Locale[F].internet.map(_.domainSuffixes) >>= utility.randomItem
     } yield s"$firstName$domain".toLowerCase
 
   def protocol: F[String] =
@@ -61,7 +62,7 @@ class InternetGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
       }
       .map(_.mkString(":"))
 
-  def hashtag: F[String] = utility.lorem.map(_.words) >>= { all =>
+  def hashtag: F[String] = Locale[F].lorem.map(_.words) >>= { all =>
     for {
       size <- utility.int(3)
       words <- utility.randomItems(size + 1)(all)

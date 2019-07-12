@@ -1,11 +1,12 @@
 package phony.generators
 
 import cats.Monad
+import cats.implicits.toFunctorOps
 import phony.RandomUtility
 
 import scala.language.higherKinds
 
-class AlphanumericGenerator[F[_]: Monad](implicit val utility: RandomUtility[F]) {
+class AlphanumericGenerator[F[_]: Monad: RandomUtility] {
 
   /**
    * Generates custom using ascii uppercase and random integers
@@ -16,23 +17,29 @@ class AlphanumericGenerator[F[_]: Monad](implicit val utility: RandomUtility[F])
    * @example custom("##??")
    */
   def custom(format: String): F[String] =
-    utility.bothify(format)
+    RandomUtility[F].bothify(format)
 
   def char: F[Char] =
-    utility.char
+    RandomUtility[F].char
 
   def boolean: F[Boolean] =
-    utility.boolean
+    RandomUtility[F].boolean
 
   def float: F[Float] =
-    utility.float
+    RandomUtility[F].float
 
   def number: F[Int] =
     number(100000)
 
   def number(max: Int): F[Int] =
-    utility.int(max)
+    RandomUtility[F].int(max)
+
+  def hash: F[String] =
+    hash(40)
+
+  def hash(length: Int): F[String] =
+    RandomUtility[F].randomItems(length)("0123456789abcdef".toList).map(_.mkString)
 
   def number(min: Int, max: Int): F[Int] =
-    Monad[F].map(utility.int(max - min))(_ + min)
+    RandomUtility[F].int(max - min)
 }

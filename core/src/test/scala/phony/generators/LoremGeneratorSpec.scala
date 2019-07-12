@@ -18,7 +18,8 @@ class LoremGeneratorSpec extends FunSuite {
     NameData(Vector.empty, Vector.empty, Vector.empty, Vector.empty),
     InternetData(Vector.empty, Vector.empty),
     CalendarData(Vector.empty, Vector.empty),
-    LocationData(Vector.empty)
+    LocationData(Vector.empty, Vector.empty),
+    ContactData(Vector.empty, Vector.empty)
   )
 
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))

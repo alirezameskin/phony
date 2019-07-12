@@ -1,3 +1,3 @@
 package phony.data
 
-case class LocationData(countries: Vector[Country])
+case class LocationData(countries: Vector[CountryData], postcodeFormats: Vector[String])

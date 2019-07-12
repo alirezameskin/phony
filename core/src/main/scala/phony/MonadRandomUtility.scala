@@ -8,7 +8,7 @@ import cats.Monad
 import scala.language.higherKinds
 import scala.util.Random
 
-class MonadRandomUtility[F[_]: Locale](implicit M: Monad[F]) extends RandomUtility[F] {
+class MonadRandomUtility[F[_]](implicit M: Monad[F]) extends RandomUtility[F] {
   protected val random: Random = new Random()
 
   override def numerify(format: String): F[String] =
@@ -41,6 +41,9 @@ class MonadRandomUtility[F[_]: Locale](implicit M: Monad[F]) extends RandomUtili
 
   override def int(max: Int): F[Int] =
     M.pure(random.nextInt(max))
+
+  override def int(min:Int, max: Int): F[Int] =
+    int(max - min).map(_ + min)
 
   override def long: F[Long] =
     M.pure(random.nextLong)

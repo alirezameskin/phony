@@ -10,8 +10,9 @@ trait Locale[F[_]] {
   def calendar: F[CalendarData]
   def location: F[LocationData]
   def lorem: F[LoremData]
+  def contact: F[ContactData]
 }
 
 object Locale {
-  def apply[F[_]](implicit instance: Locale[F]): Locale[F] = instance
+  @inline def apply[F[_]](implicit instance: Locale[F]): Locale[F] = instance
 }

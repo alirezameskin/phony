@@ -13,7 +13,8 @@ class PhonySpec extends FunSuite {
     NameData(Vector("First Name"), Vector("Last Name"), Vector("Prefix"), Vector("Suffix")),
     InternetData(Vector("email"), Vector(".test")),
     CalendarData(Vector("Monday"), Vector("May")),
-    LocationData(Vector(Country("Germany", "de")))
+    LocationData(Vector(CountryData("Germany", "de")), Vector.empty),
+    ContactData(Vector.empty, Vector.empty)
   )
 
   implicit val locale: Locale[Try] = new DefaultLocale[Try](Try(dataProvider))
@@ -21,10 +22,10 @@ class PhonySpec extends FunSuite {
   val phony: Phony[Try] = new Phony[Try]
 
   test("Generator should generate data") {
-    for (firstName <- phony.name.firstName) yield assert(firstName == "First Name")
-    for (lastName <- phony.name.lastName) yield assert(lastName == "Last Name")
-    for (lastName <- phony.name.prefix) yield assert(lastName == "Prefix")
-    for (lastName <- phony.name.suffix) yield assert(lastName == "Suffix")
-    for (lastName <- phony.name.fullName) yield assert(lastName == "First Name Last Name")
+    for (firstName <- phony.contact.firstName) yield assert(firstName == "First Name")
+    for (lastName <- phony.contact.lastName) yield assert(lastName == "Last Name")
+    for (lastName <- phony.contact.prefix) yield assert(lastName == "Prefix")
+    for (lastName <- phony.contact.suffix) yield assert(lastName == "Suffix")
+    for (lastName <- phony.contact.fullName) yield assert(lastName == "First Name Last Name")
   }
 }

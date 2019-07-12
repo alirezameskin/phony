@@ -5,7 +5,7 @@ import phony.resource.DefaultLocale
 import phony.{Locale, MonadRandomUtility, Phony, RandomUtility}
 
 trait EitherInstances {
-  implicit def utility(implicit l: Locale[Either[Throwable, ?]]): RandomUtility[Either[Throwable, ?]] =
+  implicit def utility: RandomUtility[Either[Throwable, ?]] =
     new MonadRandomUtility[Either[Throwable, ?]]()
 
   implicit def eval(implicit locale: Locale[Either[Throwable, ?]]): Phony[Either[Throwable, ?]] =

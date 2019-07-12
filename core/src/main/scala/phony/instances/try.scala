@@ -8,7 +8,7 @@ import scala.util.Try
 
 trait TryInstances {
 
-  implicit def utility(implicit l: Locale[Try]): RandomUtility[Try] = new MonadRandomUtility[Try]()
+  implicit def utility: RandomUtility[Try] = new MonadRandomUtility[Try]()
 
   implicit def try_(implicit locale: Locale[Try]): Phony[Try] = new Phony[Try]
 
