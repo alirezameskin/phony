@@ -14,7 +14,6 @@ Global / organization := "com.github.alirezameskin"
 Global / homepage := Some(url("https://github.com/alirezameskin/phony"))
 Global / licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 Global / bintrayOrganization := Some("meskin")
-Global / version := "0.3.0-snapshot"
 Global / scalaVersion := scala212
 Global / crossScalaVersions := supportedScalaVersions
 Global / coverageEnabled := true
