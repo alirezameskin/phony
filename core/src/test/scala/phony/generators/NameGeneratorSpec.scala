@@ -1,8 +1,8 @@
 package phony.generators
 
 import cats.implicits._
-import org.scalatest.FunSuite
-import org.scalatest.Matchers._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers._
 import org.scalatest.TryValues._
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
@@ -10,7 +10,7 @@ import phony.{Locale, MonadRandomUtility}
 
 import scala.util.Try
 
-class NameGeneratorSpec extends FunSuite {
+class NameGeneratorSpec extends AnyFunSuite {
 
   val dataProvider = LocaleProvider(
     LoremData(Vector.empty),

@@ -1,13 +1,13 @@
 package phony
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import cats.implicits._
 
 import scala.util.Try
 
-class PhonySpec extends FunSuite {
+class PhonySpec extends AnyFunSuite {
   val dataProvider = LocaleProvider(
     LoremData(Vector("Word1")),
     NameData(Vector("First Name"), Vector("Last Name"), Vector("Prefix"), Vector("Suffix")),

@@ -4,8 +4,6 @@ import cats.Monad
 import cats.implicits._
 import phony.{Locale, RandomUtility}
 
-import scala.language.higherKinds
-
 class ContactGenerator[F[_]: Monad: Locale: RandomUtility] {
   def firstName: F[String] =
     Locale[F].name.map(_.firstNames) >>= RandomUtility[F].randomItem

@@ -2,8 +2,6 @@ package phony
 
 import java.util.UUID
 
-import scala.language.higherKinds
-
 abstract class RandomUtility[F[_]] {
   def boolean: F[Boolean]
 
