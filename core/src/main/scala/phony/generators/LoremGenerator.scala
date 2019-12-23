@@ -4,8 +4,6 @@ import cats.Monad
 import cats.implicits._
 import phony.{Locale, RandomUtility}
 
-import scala.language.higherKinds
-
 class LoremGenerator[F[_]: Monad: Locale: RandomUtility] {
   def word: F[String] =
     Locale[F].lorem.map(_.words) >>= RandomUtility[F].randomItem

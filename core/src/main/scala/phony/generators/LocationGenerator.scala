@@ -5,8 +5,6 @@ import cats.implicits._
 import phony.data.CountryData
 import phony.{Locale, RandomUtility}
 
-import scala.language.higherKinds
-
 class LocationGenerator[F[_]: Monad: Locale: RandomUtility] {
   def latitude: F[String] =
     RandomUtility[F].double.map(d => ((d * 180) - 90).formatted("%.8g"))
@@ -24,5 +22,5 @@ class LocationGenerator[F[_]: Monad: Locale: RandomUtility] {
     Locale[F].location.map(_.countries) >>= RandomUtility[F].randomItem
 
   def postalCode: F[String] =
-    Locale[F].location.map(_.postcodeFormats)  >>= RandomUtility[F].randomItem
+    Locale[F].location.map(_.postcodeFormats) >>= RandomUtility[F].randomItem
 }

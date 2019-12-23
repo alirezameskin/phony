@@ -1,20 +1,20 @@
 resolvers += Resolver.sonatypeRepo("releases")
 
-lazy val circeVersion = "0.10.0"
-lazy val catsVersion  = "1.6.1"
-lazy val catsEffectVersion = "1.2.0"
-lazy val scalaTestVersion = "3.0.5"
+lazy val circeVersion = "0.12.3"
+lazy val catsVersion = "2.0.0"
+lazy val catsEffectVersion = "2.0.0"
+lazy val scalaTestVersion = "3.1.0"
 lazy val scalaMockVersion = "4.1.0"
 
+lazy val scala213 = "2.13.1"
 lazy val scala212 = "2.12.8"
-lazy val scala211 = "2.11.12"
-lazy val supportedScalaVersions = List(scala212, scala211)
+lazy val supportedScalaVersions = List(scala213, scala212)
 
 Global / organization := "com.github.alirezameskin"
 Global / homepage := Some(url("https://github.com/alirezameskin/phony"))
 Global / licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 Global / bintrayOrganization := Some("meskin")
-Global / scalaVersion := scala212
+Global / scalaVersion := scala213
 Global / crossScalaVersions := supportedScalaVersions
 Global / coverageEnabled := true
 
@@ -29,23 +29,22 @@ lazy val core = (project in file("core"))
       "io.circe"      %% "circe-core"    % circeVersion,
       "io.circe"      %% "circe-generic" % circeVersion,
       "io.circe"      %% "circe-parser"  % circeVersion,
-      "org.scalatest" %% "scalatest"     % scalaTestVersion % Test,
-    ),
+      "org.scalatest" %% "scalatest"     % scalaTestVersion % Test
+    )
   )
 
-lazy val catsEffect = (project in file ("cats-effect"))
+lazy val catsEffect = (project in file("cats-effect"))
   .settings(Settings.commonSettings)
   .settings(
     moduleName := "phony-cats-effect",
     bintrayOrganization := Some("meskin"),
     bintrayRepository := "phony",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect" % catsEffectVersion,
+      "org.typelevel" %% "cats-effect" % catsEffectVersion
     )
   )
   .aggregate(core)
   .dependsOn(core)
-
 
 lazy val root = (project in file("."))
   .aggregate(core, catsEffect)
@@ -55,4 +54,3 @@ lazy val root = (project in file("."))
     publish := {},
     bintrayUnpublish := {}
   )
-

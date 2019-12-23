@@ -1,16 +1,16 @@
 package phony.generators
 
 import cats.implicits._
-import org.scalatest.Matchers._
 import org.scalatest.TryValues._
-import org.scalatest._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers._
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import phony.{Locale, MonadRandomUtility}
 
 import scala.util.Try
 
-class AlphanumericGeneratorSpec extends FunSuite {
+class AlphanumericGeneratorSpec extends AnyFunSuite {
 
   val dataProvider = LocaleProvider(
     LoremData(Vector.empty),
@@ -26,11 +26,11 @@ class AlphanumericGeneratorSpec extends FunSuite {
   val generator = new AlphanumericGenerator[Try]
 
   test("It should generate a string with ###??? format") {
-    generator.custom("###???").success.value should fullyMatch regex "[0-9]{3}[A-Z]{3}"
+    (generator.custom("###???").success.value should fullyMatch).regex("[0-9]{3}[A-Z]{3}")
   }
 
   test("It should generate a character") {
-    generator.char.map(_.toString).success.value should fullyMatch regex "[A-Z]"
+    (generator.char.map(_.toString).success.value should fullyMatch).regex("[A-Z]")
   }
 
   test("It should return one boolean if boolean method is called") {
@@ -39,11 +39,11 @@ class AlphanumericGeneratorSpec extends FunSuite {
   }
 
   test("It should generate a float number if float method is called") {
-    generator.float.map(_.toString).success.value should fullyMatch regex "[-+]?([0-9]*\\.[0-9]+|[0-9]+)."
+    (generator.float.map(_.toString).success.value should fullyMatch).regex("[-+]?([0-9]*\\.[0-9]+|[0-9]+).")
   }
 
   test("It should generate an integer if number method is called") {
-    generator.number.map(_.toString).success.value should fullyMatch regex "[0-9]+"
+    (generator.number.map(_.toString).success.value should fullyMatch).regex("[0-9]+")
   }
 
   test("It should generate an integer less than 100 ") {
@@ -60,4 +60,3 @@ class AlphanumericGeneratorSpec extends FunSuite {
     number should be <= 600
   }
 }
-

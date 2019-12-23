@@ -9,7 +9,6 @@ import io.circe.parser._
 import phony.Locale
 import phony.data._
 
-import scala.language.higherKinds
 import scala.util.{Failure, Success, Try}
 
 class DefaultLocale[F[_]: Functor](val dataProvider: F[LocaleProvider]) extends Locale[F] {

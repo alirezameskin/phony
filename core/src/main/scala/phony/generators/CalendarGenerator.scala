@@ -7,8 +7,6 @@ import cats.Monad
 import cats.implicits._
 import phony.{Locale, RandomUtility}
 
-import scala.language.higherKinds
-
 class CalendarGenerator[F[_]: Monad: Locale: RandomUtility] {
   def year: F[Int] =
     RandomUtility[F].int(1970, 2025)

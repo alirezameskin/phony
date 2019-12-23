@@ -9,12 +9,12 @@ Phony is fake data generate with `cats` library.
 
 ## Quick Start
 
-To use Phony in an existing SBT project with Scala 2.11 and 2.12, add the following dependency to your build.sbt:
+To use Phony in an existing SBT project with Scala 2.12 and 2.13, add the following dependency to your build.sbt:
 
 ```sbtshell
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.3.1"
+libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.4.0"
 ```
 
 ## Examples
@@ -45,7 +45,7 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.3.1"
 ```sbtshell
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.3.0-snapshot"
+libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.4.0"
 ```
 
 ```scala

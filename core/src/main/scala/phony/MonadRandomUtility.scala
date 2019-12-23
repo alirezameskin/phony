@@ -5,7 +5,6 @@ import java.util.UUID
 import _root_.cats.implicits._
 import cats.Monad
 
-import scala.language.higherKinds
 import scala.util.Random
 
 class MonadRandomUtility[F[_]](implicit M: Monad[F]) extends RandomUtility[F] {
@@ -42,7 +41,7 @@ class MonadRandomUtility[F[_]](implicit M: Monad[F]) extends RandomUtility[F] {
   override def int(max: Int): F[Int] =
     M.pure(random.nextInt(max))
 
-  override def int(min:Int, max: Int): F[Int] =
+  override def int(min: Int, max: Int): F[Int] =
     int(max - min).map(_ + min)
 
   override def long: F[Long] =

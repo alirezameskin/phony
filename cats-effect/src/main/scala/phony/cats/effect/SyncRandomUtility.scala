@@ -6,7 +6,6 @@ import _root_.cats.effect.Sync
 import _root_.cats.implicits._
 import phony.RandomUtility
 
-import scala.language.higherKinds
 import scala.util.Random
 
 class SyncRandomUtility[F[_]: Sync] extends RandomUtility[F] {
@@ -43,7 +42,7 @@ class SyncRandomUtility[F[_]: Sync] extends RandomUtility[F] {
   override def int(max: Int): F[Int] =
     Sync[F].delay(random.nextInt(max))
 
-  override def int(min:Int, max: Int): F[Int] =
+  override def int(min: Int, max: Int): F[Int] =
     int(max - min).map(_ + min)
 
   override def long: F[Long] =

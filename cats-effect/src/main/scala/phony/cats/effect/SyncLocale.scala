@@ -9,8 +9,6 @@ import cats.effect.Sync
 import phony.Locale
 import phony.resource.{DefaultLocale, LocaleProvider}
 
-import scala.language.higherKinds
-
 object SyncLocale {
   def apply[F[_]: Sync: Monad](language: String): Locale[F] = load[F](language)
 

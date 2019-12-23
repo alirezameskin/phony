@@ -1,16 +1,16 @@
 package phony.generators
 
 import cats.implicits._
-import org.scalatest.Matchers._
 import org.scalatest.TryValues._
-import org.scalatest._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers._
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import phony.{Locale, MonadRandomUtility}
 
 import scala.util.Try
 
-class LoremGeneratorSpec extends FunSuite {
+class LoremGeneratorSpec extends AnyFunSuite {
   val dataProvider = LocaleProvider(
     LoremData(
       Vector("back", "background", "bad", "badly", "bag", "bake", "dolores", "et", "bind", "biological", "bird")

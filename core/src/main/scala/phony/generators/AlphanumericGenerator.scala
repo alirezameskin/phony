@@ -4,8 +4,6 @@ import cats.Monad
 import cats.implicits.toFunctorOps
 import phony.RandomUtility
 
-import scala.language.higherKinds
-
 class AlphanumericGenerator[F[_]: Monad: RandomUtility] {
 
   /**
@@ -41,5 +39,5 @@ class AlphanumericGenerator[F[_]: Monad: RandomUtility] {
     RandomUtility[F].randomItems(length)("0123456789abcdef".toList).map(_.mkString)
 
   def number(min: Int, max: Int): F[Int] =
-    RandomUtility[F].int(max - min)
+    RandomUtility[F].int(min, max)
 }

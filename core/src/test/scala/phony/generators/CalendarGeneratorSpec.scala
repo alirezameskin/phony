@@ -1,17 +1,16 @@
 package phony.generators
 
-
 import cats.implicits._
-import org.scalatest.Matchers._
 import org.scalatest.TryValues._
-import org.scalatest._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers._
 import phony.data._
 import phony.resource.{DefaultLocale, LocaleProvider}
 import phony.{Locale, MonadRandomUtility}
 
 import scala.util.Try
 
-class CalendarGeneratorSpec extends FunSuite {
+class CalendarGeneratorSpec extends AnyFunSuite {
   val dataProvider = LocaleProvider(
     LoremData(Vector.empty),
     NameData(Vector.empty, Vector.empty, Vector.empty, Vector.empty),
@@ -33,21 +32,21 @@ class CalendarGeneratorSpec extends FunSuite {
 
   test("It should return one day from the available day names") {
     val day = generator.day.success.value
-    dataProvider.calendar.days should contain (day)
+    dataProvider.calendar.days should contain(day)
   }
 
   test("It should return a month from the available months") {
     val month = generator.month.success.value
 
-    dataProvider.calendar.months should contain (month)
+    dataProvider.calendar.months should contain(month)
   }
 
   test("It should return a 24H time") {
-    generator.time24h.success.value should fullyMatch regex "[0-2][0-9]:[0-6][0-9]"
+    (generator.time24h.success.value should fullyMatch).regex("[0-2][0-9]:[0-6][0-9]")
   }
 
   test("It should return a 12H time") {
-    generator.time12h.success.value should fullyMatch regex "[0-1][0-9]:[0-6][0-9]"
+    (generator.time12h.success.value should fullyMatch).regex("[0-1][0-9]:[0-6][0-9]")
   }
 
   test("It should return a date in Date format") {
@@ -55,7 +54,7 @@ class CalendarGeneratorSpec extends FunSuite {
   }
 
   test("It should return a date string in format yyyy-MM-dd") {
-    generator.date("yyyy-MM-dd").success.value should fullyMatch regex "[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}"
+    (generator.date("yyyy-MM-dd").success.value should fullyMatch).regex("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}")
   }
 
   test("It should return a date string in iso 8601 format") {
@@ -70,4 +69,3 @@ class CalendarGeneratorSpec extends FunSuite {
     generator.timezone.success.value
   }
 }
-
