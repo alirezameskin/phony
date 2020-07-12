@@ -46,6 +46,14 @@ lazy val catsEffect = (project in file("cats-effect"))
   .aggregate(core)
   .dependsOn(core)
 
+lazy val cli = (project in file ("cli"))
+  .settings(Settings.commonSettings)
+  .settings(
+    moduleName := "phony-cli",
+  )
+  .aggregate(core, catsEffect)
+  .dependsOn(core, catsEffect)
+
 lazy val root = (project in file("."))
   .aggregate(core, catsEffect)
   .dependsOn(core, catsEffect)
