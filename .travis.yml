@@ -1,10 +1,89 @@
-language:
-  - scala
+# copied from https://github.com/note/teleport-scala/blob/master/.travis.yml
+jobs:
+  include:
+    - stage: test-scala-2.13
+      script: sbt clean +test
+      language: scala
+      scala:
+        - 2.13.1
+    - stage: test-scala-2.12
+      script: sbt clean +test
+      language: scala
+      scala:
+        - 2.12.8
+    - os: linux
+      env: JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+      if: branch = master OR branch =~ /^v\d+\.\d+\.\d+.*$/
+      before_install:
+        - curl -sL https://get.sdkman.io | bash
+        - mkdir -p "$HOME/.sdkman/etc/"
+        - echo sdkman_auto_answer=true > "$HOME/.sdkman/etc/config"
+        - echo sdkman_auto_selfupdate=true >> "$HOME/.sdkman/etc/config"
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
+      install:
+        - sdk install java 20.0.0.r11-grl
+        - gu install native-image
+        - native-image --version
+        - sdk install sbt
+      script:
+        - ./ci/script.sh
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file_glob: true
+        file: release/phony*
+        skip_cleanup: true
+        on:
+          tags: true
+    - os: osx
+      env: JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+      if: branch = master OR branch =~ /^v\d+\.\d+\.\d+.*$/
+      script:
+        - ./ci/script.sh
+      before_install:
+        - curl -sL https://get.sdkman.io | bash
+        - mkdir -p "$HOME/.sdkman/etc/"
+        - echo sdkman_auto_answer=true > "$HOME/.sdkman/etc/config"
+        - echo sdkman_auto_selfupdate=true >> "$HOME/.sdkman/etc/config"
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-scala:
-  - 2.13.1
-  - 2.12.8
-
-script:
-  - sbt clean test
-
+      install:
+        - sdk install java 20.0.0.r11-grl
+        - gu install native-image
+        - native-image --version
+        - sdk install sbt
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file_glob: true
+        file: release/phony*
+        skip_cleanup: true
+        on:
+          tags: true
+    - os: windows
+      if: branch = master OR branch =~ /^v\d+\.\d+\.\d+.*$/
+      language: shell
+      env: JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+      before_install:
+        - choco install zip unzip
+        - choco install visualstudio2017-workload-vctools
+        - curl -sL https://get.sdkman.io | bash
+        - mkdir -p "$HOME/.sdkman/etc/"
+        - echo sdkman_auto_answer=true > "$HOME/.sdkman/etc/config"
+        - echo sdkman_auto_selfupdate=true >> "$HOME/.sdkman/etc/config"
+        - source "$HOME/.sdkman/bin/sdkman-init.sh"
+      install:
+        - sdk install java 20.0.0.r11-grl
+        - gu.cmd install native-image
+        - native-image.cmd --version
+        - sdk install sbt
+      script:
+        - ./ci/script.sh
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file_glob: true
+        file: release/phony*
+        skip_cleanup: true
+        on:
+          tags: true

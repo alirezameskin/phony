@@ -32,6 +32,7 @@ lazy val core = (project in file("core"))
       "org.scalatest" %% "scalatest"     % scalaTestVersion % Test
     )
   )
+  .disablePlugins(AssemblyPlugin)
 
 lazy val catsEffect = (project in file("cats-effect"))
   .settings(Settings.commonSettings)
@@ -45,24 +46,22 @@ lazy val catsEffect = (project in file("cats-effect"))
   )
   .aggregate(core)
   .dependsOn(core)
+  .disablePlugins(AssemblyPlugin)
 
 lazy val cli = (project in file("cli"))
   .settings(Settings.commonSettings)
   .settings(
-    packageName := "phony",
     moduleName := "phony-cli",
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion,
       "co.fs2"                 %% "fs2-core"                 % "2.4.0",
       "com.github.scopt"       %% "scopt"                    % "3.7.1",
       "com.monovore"           %% "decline-effect"           % "1.0.0",
+      "com.lihaoyi"            %% "fansi"                    % "0.2.7"
     )
   )
   .aggregate(core, catsEffect)
   .dependsOn(core, catsEffect)
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
-  .enablePlugins(GraalVMNativeImagePlugin)
 
 lazy val root = (project in file("."))
   .aggregate(core, catsEffect)
@@ -72,3 +71,4 @@ lazy val root = (project in file("."))
     publish := {},
     bintrayUnpublish := {}
   )
+  .disablePlugins(AssemblyPlugin)

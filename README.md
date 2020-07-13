@@ -6,8 +6,20 @@ Phony is fake data generate with `cats` library.
 [![Build Status](https://travis-ci.com/alirezameskin/phony.svg?branch=master)](https://travis-ci.com/alirezameskin/phony)
 [![codecov](https://codecov.io/gh/alirezameskin/phony/branch/master/graph/badge.svg)](https://codecov.io/gh/alirezameskin/phony)
 
+## Using as a tool
 
-## Quick Start
+```bash
+#Generate 10 random names
+phony -l en -t "{{ contact.firstName }} {{ contact.lastName }}" -c 10
+```
+
+```bash
+echo 'INSERT INTO users (first_name, last_name, age) VALUES("{{ contact.firstName }}", "{{ contact.lastName }}", {{alphanumeric.number(18, 68)}});' > /tmp/tpl.txt
+
+phony -f /tmp/tpl.txt -c 10
+```
+
+## Using as a library
 
 To use Phony in an existing SBT project with Scala 2.12 and 2.13, add the following dependency to your build.sbt:
 
@@ -70,8 +82,8 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.4.
   case class Contact(firstName :String, lastName : String, age:Int)
 
   val contact = for {
-    firstName <- Phony[IO].name.firstName
-    lastName  <- Phony[IO].name.lastName
+    firstName <- Phony[IO].contact.firstName
+    lastName  <- Phony[IO].contact.lastName
     age       <- Phony[IO].alphanumeric.number(18, 68)
   } yield Contact(firstName, lastName, age)
 

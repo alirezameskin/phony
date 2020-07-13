@@ -9,6 +9,8 @@ import phony.cli.template.tokenizer.TemplateTokenizer
 import phony.cli.template.{DefaultFunctionResolver, FunctionResolver}
 import phony.{Phony, RandomUtility}
 
+import scala.util.Try
+
 object GenerateCommand {
 
   type Program = List[TemplateAST]
@@ -18,7 +20,7 @@ object GenerateCommand {
       case Text(t) => IO(t)
       case op: FunctionCall =>
         if (resolver.resolve.isDefinedAt(op)) resolver.resolve.apply(op)
-        else IO.raiseError(new Exception(s"Invalid Function ${op.func}"))
+        else IO.raiseError(new Exception(s"Invalid Function ${op.func}(" + op.args.mkString(", ") + ")"))
     }
 
   def execute(program: Program, resolver: FunctionResolver[IO]): IO[String] =
@@ -48,11 +50,21 @@ object GenerateCommand {
       )
 
   def execute(configs: GenerateOptions): IO[ExitCode] = {
-    val tpl = configs.templateFile
-      .map(path => scala.io.Source.fromFile(path.toFile).mkString(""))
-      .orElse(configs.template)
-      .getOrElse("{{alphanumeric.number}}")
+    val template = configs.templateFile match {
+      case Some(path) =>
+        IO.fromTry(Try(scala.io.Source.fromFile(path.toFile).mkString("")))
+      case None =>
+        IO(configs.template.getOrElse("{{alphanumeric.number()}}"))
+    }
 
-    generator(tpl, configs.language).map(println).take(configs.count).compile.drain.as(ExitCode.Success)
+    val result = for {
+      tpl <- template
+      res <- generator(tpl, configs.language).map(println).take(configs.count).compile.drain
+    } yield res
+
+    result.attempt.flatMap {
+      case Right(_)  => IO(ExitCode.Success)
+      case Left(err) => IO(println(fansi.Color.Red(err.getMessage))) *> IO(ExitCode.Error)
+    }
   }
 }
