@@ -1,13 +1,14 @@
 resolvers += Resolver.sonatypeRepo("releases")
 
-lazy val circeVersion = "0.12.3"
-lazy val catsVersion = "2.0.0"
-lazy val catsEffectVersion = "2.0.0"
-lazy val scalaTestVersion = "3.1.0"
-lazy val scalaMockVersion = "4.1.0"
+lazy val circeVersion       = "0.12.3"
+lazy val catsVersion        = "2.1.1"
+lazy val catsEffectVersion  = "2.1.3"
+lazy val scalaTestVersion   = "3.1.0"
+lazy val scalaMockVersion   = "4.1.0"
+lazy val scalaParserVersion = "1.1.2"
 
-lazy val scala213 = "2.13.1"
-lazy val scala212 = "2.12.8"
+lazy val scala213               = "2.13.1"
+lazy val scala212               = "2.12.8"
 lazy val supportedScalaVersions = List(scala213, scala212)
 
 Global / organization := "com.github.alirezameskin"
@@ -16,7 +17,6 @@ Global / licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-
 Global / bintrayOrganization := Some("meskin")
 Global / scalaVersion := scala213
 Global / crossScalaVersions := supportedScalaVersions
-Global / coverageEnabled := true
 
 lazy val core = (project in file("core"))
   .settings(Settings.commonSettings)
@@ -45,6 +45,24 @@ lazy val catsEffect = (project in file("cats-effect"))
   )
   .aggregate(core)
   .dependsOn(core)
+
+lazy val cli = (project in file("cli"))
+  .settings(Settings.commonSettings)
+  .settings(
+    packageName := "phony",
+    moduleName := "phony-cli",
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion,
+      "co.fs2"                 %% "fs2-core"                 % "2.4.0",
+      "com.github.scopt"       %% "scopt"                    % "3.7.1",
+      "com.monovore"           %% "decline-effect"           % "1.0.0",
+    )
+  )
+  .aggregate(core, catsEffect)
+  .dependsOn(core, catsEffect)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(GraalVMNativeImagePlugin)
 
 lazy val root = (project in file("."))
   .aggregate(core, catsEffect)
