@@ -1,59 +1,34 @@
 package phony.cli
 
-import cats.effect.{ExitCode, IO, IOApp}
+import java.nio.file.Path
+
+import cats.effect._
 import cats.implicits._
-import fs2.Stream
-import phony.cats.effect.{SyncLocale, SyncRandomUtility}
-import phony.{Phony, RandomUtility}
-import phony.cli.template.parser.{FunctionCall, TemplateAST, TemplateExpressionParser, Text}
-import phony.cli.template.tokenizer.TemplateTokenizer
-import phony.cli.template.{DefaultFunctionResolver, FunctionResolver}
+import com.monovore.decline.Opts
+import com.monovore.decline.effect.CommandIOApp
 
-object PhonyApp extends IOApp {
+case class GenerateOptions(language: String, template: Option[String], templateFile: Option[Path], count: Long)
 
-  type Program = List[TemplateAST]
+object PhonyApp extends CommandIOApp(name = "phony", header = "Random data generator", version = "0.4.0") {
+  val languageOpts: Opts[String] =
+    Opts.option[String]("language", "Language.", short = "l").orElse(Opts("en"))
 
-  def eval(token: TemplateAST, resolver: FunctionResolver[IO]) =
-    token match {
-      case Text(t) => IO(t)
-      case op: FunctionCall =>
-        if (resolver.resolve.isDefinedAt(op)) resolver.resolve.apply(op)
-        else IO.raiseError(new Exception(s"Invalid Function ${op.func}"))
-    }
+  val templateOpts: Opts[Option[String]] =
+    Opts.option[String]("template", "Template", short = "t").orNone
 
-  def execute(program: Program, resolver: FunctionResolver[IO]): IO[String] =
-    program.traverse(a => eval(a, resolver)).map(_.mkString(""))
+  val templateFileOpts: Opts[Option[Path]] =
+    Opts.option[Path]("templateFile", "Path to the template file.", short = "f").orNone
 
-  def parse(template: String): IO[Program] =
-    IO.fromEither(for {
-      tokens <- TemplateTokenizer(template)
-      ast    <- TemplateExpressionParser(tokens)
-    } yield ast)
+  val countOpts: Opts[Long] =
+    Opts.option[Long]("count", "Iteration", "c").orElse(Opts(1L))
 
-  def functionResolver(language: String): IO[FunctionResolver[IO]] = {
-    implicit val locale = SyncLocale[IO](language)
-    implicit def utility: RandomUtility[IO] = new SyncRandomUtility[IO]()
-    val P               = new Phony[IO]
+  val pathOpts: Opts[String] =
+    Opts.argument[String](metavar = "path")
 
-    IO(new DefaultFunctionResolver(P))
-  }
+  val generateOpts: Opts[GenerateOptions] =
+    (languageOpts, templateOpts, templateFileOpts, countOpts).mapN(GenerateOptions)
 
-  def generator(tpl: String, language: String): Stream[IO, String] =
-    Stream.eval(parse(tpl))
-      .flatMap(prg =>
-        Stream.eval(functionResolver(language))
-          .flatMap(resolver => Stream.repeatEval(execute(prg, resolver)))
-      )
-
-  override def run(args: List[String]): IO[ExitCode] = {
-    println(args)
-    val count = 100L
-    val language = "en"
-    val tpl =
-      """
-        |INSERT INTO users (first_name, last_name, age) VALUES("{{ contact.firstName }}", "{{ contact.lastName }}", {{alphanumeric.number(18, 68)}});
-        |""".stripMargin.trim
-
-    generator(tpl, language).map(println).take(count).compile.drain.as(ExitCode.Success)
+  override def main: Opts[IO[ExitCode]] = generateOpts.map { options =>
+    GenerateCommand.execute(options)
   }
 }

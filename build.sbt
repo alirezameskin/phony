@@ -1,8 +1,8 @@
 resolvers += Resolver.sonatypeRepo("releases")
 
 lazy val circeVersion       = "0.12.3"
-lazy val catsVersion        = "2.0.0"
-lazy val catsEffectVersion  = "2.0.0"
+lazy val catsVersion        = "2.1.1"
+lazy val catsEffectVersion  = "2.1.3"
 lazy val scalaTestVersion   = "3.1.0"
 lazy val scalaMockVersion   = "4.1.0"
 lazy val scalaParserVersion = "1.1.2"
@@ -54,13 +54,15 @@ lazy val cli = (project in file("cli"))
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion,
       "co.fs2"                 %% "fs2-core"                 % "2.4.0",
-      "com.github.scopt"       %% "scopt"                    % "3.7.1"
+      "com.github.scopt"       %% "scopt"                    % "3.7.1",
+      "com.monovore"           %% "decline-effect"           % "1.0.0",
     )
   )
   .aggregate(core, catsEffect)
   .dependsOn(core, catsEffect)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
+  .enablePlugins(GraalVMNativeImagePlugin)
 
 lazy val root = (project in file("."))
   .aggregate(core, catsEffect)
