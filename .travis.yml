@@ -1,13 +1,12 @@
-# copied from https://github.com/note/teleport-scala/blob/master/.travis.yml
 jobs:
   include:
     - stage: test-scala-2.13
-      script: sbt clean +test
+      script: sbt clean test
       language: scala
       scala:
         - 2.13.1
     - stage: test-scala-2.12
-      script: sbt clean +test
+      script: sbt clean test
       language: scala
       scala:
         - 2.12.8
