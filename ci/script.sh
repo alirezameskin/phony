@@ -12,9 +12,9 @@ if [ $TRAVIS_OS_NAME = windows ]; then
   #find target -iname "*.jar" -exec cp {} phony.jar \;
   ci/windows.bat
 elif [ $TRAVIS_OS_NAME = osx ]; then
-  native-image --verbose --no-fallback -jar "cli/target/scala-2.13/cli-assembly-$VERSION.jar" phony
+  native-image --verbose --no-fallback -H:IncludeResources='locales/.*.json' -jar "cli/target/scala-2.13/cli-assembly-$VERSION.jar" phony
 else
-  native-image --verbose --static --no-fallback -jar "cli/target/scala-2.13/cli-assembly-$VERSION.jar" phony
+  native-image --verbose --static --no-fallback -H:IncludeResources='locales/.*.json' -jar "cli/target/scala-2.13/cli-assembly-$VERSION.jar" phony
 fi
 
 mkdir release
