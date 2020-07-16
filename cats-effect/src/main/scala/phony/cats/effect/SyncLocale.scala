@@ -6,6 +6,7 @@ import _root_.io.circe.generic.auto._
 import _root_.io.circe.parser._
 import cats.Monad
 import cats.effect.Sync
+import cats.implicits._
 import phony.Locale
 import phony.resource.{DefaultLocale, LocaleProvider}
 
@@ -13,12 +14,20 @@ object SyncLocale {
   def apply[F[_]: Sync: Monad](language: String): Locale[F] = load[F](language)
 
   private def load[F[_]: Sync](language: String): Locale[F] = {
-    val resource: F[InputStream] = Sync[F].delay(DefaultLocale.resourceUrl(language).openStream)
-    val content: F[String] = Sync[F].flatMap(resource)(read[F])
-    val data: F[LocaleProvider] = Sync[F].flatMap(content)(toJson[F])
+    val data = for {
+      resource <- resource[F](language)
+      content  <- read[F](resource)
+      data     <- toJson[F](content)
+    } yield data
 
     new DefaultLocale[F](data)
   }
+
+  private def resource[F[_]: Sync](language: String): F[InputStream] =
+    Sync[F].delay(DefaultLocale.resourceUrl(language)).flatMap {
+      case null => Sync[F].raiseError[InputStream](new RuntimeException(s"Not Supported language ${language}"))
+      case url  => Sync[F].pure(url.openStream)
+    }
 
   private def read[F[_]: Sync](stream: InputStream): F[String] =
     Sync[F].delay(scala.io.Source.fromInputStream(stream).getLines.mkString("\n"))

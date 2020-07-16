@@ -51,7 +51,7 @@ object DefaultLocale {
   private[phony] def resource(language: String): Either[Throwable, InputStream] =
     Try(resourceUrl(language).openStream) match {
       case Success(value) => Right(value)
-      case Failure(_) => Left(new RuntimeException(s"Invalid Resource for language ${language}"))
+      case Failure(_) => Left(new RuntimeException(s"Not supported language ${language}"))
     }
 
   private[phony] def resourceUrl(language: String) =
