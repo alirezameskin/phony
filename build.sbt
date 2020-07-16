@@ -58,7 +58,8 @@ lazy val cli = (project in file("cli"))
       "com.github.scopt"       %% "scopt"                    % "3.7.1",
       "com.monovore"           %% "decline-effect"           % "1.0.0",
       "com.lihaoyi"            %% "fansi"                    % "0.2.7"
-    )
+    ),
+    bintrayUnpublish := {}
   )
   .aggregate(core, catsEffect)
   .dependsOn(core, catsEffect)
