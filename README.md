@@ -26,7 +26,7 @@ To use Phony in an existing SBT project with Scala 2.12 and 2.13, add the follow
 ```sbtshell
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.4.2"
+libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.4.3"
 ```
 
 ## Examples
@@ -57,7 +57,7 @@ libraryDependencies += "com.github.alirezameskin" %% "phony-core" % "0.4.2"
 ```sbtshell
 resolvers += "phony" at "https://dl.bintray.com/meskin/phony/"
 
-libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.4.0"
+libraryDependencies += "com.github.alirezameskin" %% "phony-cats-effect" % "0.4.3"
 ```
 
 ```scala

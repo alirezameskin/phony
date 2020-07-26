@@ -3,6 +3,8 @@ package phony.cli.template.tokenizer
 import phony.cli.util.BaseRegexParser
 
 object TemplateTokenizer extends BaseRegexParser {
+  override def skipWhitespace: Boolean = false
+
   val expressionRegex = """\{\{[a-z_A-Z0-9\|\s\.\(\)\"\,]+\}\}""".r
 
   def plainText: Parser[PlainText] =
