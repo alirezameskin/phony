@@ -1,37 +1,52 @@
 package phony.cli.template.parser
 
-import phony.cli
-import phony.cli.template.tokenizer.{Expression, PlainText, TemplateToken}
-import phony.cli.util.BaseRegexParser
+import phony.cli.template.tokenizer._
 
-object TemplateExpressionParser extends BaseRegexParser {
+import scala.util.parsing.combinator.Parsers
+import scala.util.parsing.input.{NoPosition, Position, Reader}
 
-  def functionName: Parser[String] =
-    ident ~ rep(ident | ".") ^^ (n => n._1 + n._2.mkString(""))
+object TemplateExpressionParser extends Parsers {
+  override type Elem = TemplateToken
 
-  def paramString: Parser[String] = """\"[0-9a-zA-Z\-"#\?]+\"""".r
+  class TemplateTokenReader(tokens: Seq[TemplateToken]) extends Reader[TemplateToken] {
+    override def first: TemplateToken        = tokens.head
+    override def atEnd: Boolean              = tokens.isEmpty
+    override def pos: Position               = NoPosition
+    override def rest: Reader[TemplateToken] = new TemplateTokenReader(tokens.tail)
+  }
 
-  def functionWithoutArgs: Parser[FunctionCall] =
-    functionName ^^ (n => FunctionCall(n))
+  def functionCall: Parser[FunctionCall] = accept(
+    "functionCall", {
+      case f: FunctionCallToken => FunctionCall(f.func, f.args)
+    }
+  )
 
-  def functionWithArgs: Parser[FunctionCall] =
-    functionName ~ "(" ~ repsep(paramString | decimalNumber, ",") ~ ")" ^^ {
-      case func ~ _ ~ args ~ _ => FunctionCall(func, args)
+  def plainText: Parser[Text] = accept(
+    "text", {
+      case t: PlainTextToken => Text(t.value)
+    }
+  )
+
+  def loopStart: Parser[Int] = accept(
+    "loopStart", {
+      case t: LoopStartToken => t.count
+    }
+  )
+
+  def loop: Parser[Loop] =
+    loopStart ~ rep(plainText | functionCall) <~ LoopEndToken ^^ {
+      case c ~ tokens => Loop(c, tokens)
     }
 
-  def program: Parser[TemplateAST] =
-    phrase(functionWithArgs | functionWithoutArgs)
+  def program: Parser[List[TemplateAST]] =
+    rep(loop | functionCall | plainText)
 
-  def apply(tokens: Seq[TemplateToken]): Either[Throwable, List[TemplateAST]] = {
-    val parts = tokens.map {
-      case Expression(expr) =>
-        parse(program, expr) match {
-          case Success(result, _) => Right(result)
-          case NoSuccess(msg, _) => Left(new Exception(s"Error: $msg"))
-        }
-      case PlainText(v) => Right(Text(v))
-    }.toList
+  def apply(tokens: List[TemplateToken]): Either[Throwable, List[TemplateAST]] = {
+    val reader = new TemplateTokenReader(tokens)
 
-    cli.util.sequence(parts)
+    program(reader) match {
+      case Success(result, _) => Right(result)
+      case NoSuccess(msg, _)  => Left(new RuntimeException(msg))
+    }
   }
 }

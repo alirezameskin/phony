@@ -4,7 +4,7 @@ import cats.effect.{ExitCode, IO}
 import cats.implicits._
 import fs2.Stream
 import phony.cats.effect.{SyncLocale, SyncRandomUtility}
-import phony.cli.template.parser.{FunctionCall, TemplateAST, TemplateExpressionParser, Text}
+import phony.cli.template.parser._
 import phony.cli.template.tokenizer.TemplateTokenizer
 import phony.cli.template.{DefaultFunctionResolver, FunctionResolver}
 import phony.{Phony, RandomUtility}
@@ -15,12 +15,17 @@ object GenerateCommand {
 
   type Program = List[TemplateAST]
 
-  def eval(token: TemplateAST, resolver: FunctionResolver[IO]) =
+  def eval(token: TemplateAST, resolver: FunctionResolver[IO]): IO[String] =
     token match {
       case Text(t) => IO(t)
       case op: FunctionCall =>
         if (resolver.resolve.isDefinedAt(op)) resolver.resolve.apply(op)
         else IO.raiseError(new Exception(s"Invalid Function ${op.func}(" + op.args.mkString(", ") + ")"))
+      case Loop(count, asts) =>
+        (0 until count).foldRight(IO("")) { (_, acc) =>
+          val res = asts.traverse(a => eval(a, resolver)).map(_.mkString)
+          acc.map2(res)((s1, s2) => s1 + s2)
+        }
     }
 
   def execute(program: Program, resolver: FunctionResolver[IO]): IO[String] =
@@ -33,9 +38,11 @@ object GenerateCommand {
     } yield ast)
 
   def functionResolver(language: String): IO[FunctionResolver[IO]] = {
-    implicit val locale                     = SyncLocale[IO](language)
+    implicit val locale = SyncLocale[IO](language)
+
     implicit def utility: RandomUtility[IO] = new SyncRandomUtility[IO]()
-    val P                                   = new Phony[IO]
+
+    val P = new Phony[IO]
 
     IO(new DefaultFunctionResolver(P))
   }
