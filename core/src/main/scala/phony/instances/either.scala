@@ -12,6 +12,6 @@ trait EitherInstances {
     new Phony[Either[Throwable, ?]]
 
   object languages {
-    implicit def ENGLISH: Locale[Either[Throwable, ?]] = DefaultLocale[Either[Throwable, ?]]("en")
+    implicit def ENGLISH: Locale[Either[Throwable, ?]] = DefaultLocale[Either[Throwable, *]]("en")
   }
 }

@@ -14,7 +14,16 @@ phony -l en -t "{{ contact.firstName }} {{ contact.lastName }}" -c 10
 ```
 
 ```bash
-echo 'INSERT INTO users (first_name, last_name, age) VALUES("{{ contact.firstName }}", "{{ contact.lastName }}", {{alphanumeric.number(18, 68)}});' > /tmp/tpl.txt
+
+echo "" > /tmp/tpl.txt
+echo 'INSERT INTO users (first_name, last_name, age) VALUES("{{ contact.firstName }}", "{{ contact.lastName }}", {{alphanumeric.number(18, 68)}});' >> /tmp/tpl.txt
+echo "SET @USER_ID = @@IDENTITY;" >> /tmp/tpl.txt
+echo '{{#loop 10}}' >> /tmp/tpl.txt
+echo 'INSERT INTO login_history(user_id,ip, timestamp) VALUES(@USER_ID, "{{internet.ip}}", "{{calendar.unixTime}}");' >> /tmp/tpl.txt
+echo '{{#endloop}}' >> /tmp/tpl.txt
+echo '{{#loop 20}}' >> /tmp/tpl.txt
+echo 'INSERT INTO user_locations(user_id, latitude, longitude, timestamp) VALUES(@USER_ID, "{{location.latitude}}", "{{location.longitude}}");' >> /tmp/tpl.txt
+echo '{{#endloop}}' >> /tmp/tpl.txt
 
 phony -f /tmp/tpl.txt -c 10
 ```

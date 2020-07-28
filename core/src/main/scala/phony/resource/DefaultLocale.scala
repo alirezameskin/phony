@@ -2,8 +2,8 @@ package phony.resource
 
 import java.io.InputStream
 
+import cats.MonadError
 import cats.implicits._
-import cats.{Functor, MonadError}
 import io.circe.generic.auto._
 import io.circe.parser._
 import phony.Locale
@@ -11,7 +11,8 @@ import phony.data._
 
 import scala.util.{Failure, Success, Try}
 
-class DefaultLocale[F[_]: Functor](val dataProvider: F[LocaleProvider]) extends Locale[F] {
+class DefaultLocale[F[_]](val dataProvider: F[LocaleProvider])(implicit ev: MonadError[F, Throwable])
+    extends Locale[F] {
   override def name: F[NameData] = dataProvider.map(_.names)
 
   override def internet: F[InternetData] = dataProvider.map(_.internet)
@@ -30,8 +31,8 @@ object DefaultLocale {
 
     val data: F[LocaleProvider] = (for {
       resource <- resource(language)
-      content <- content(resource)
-      data <- toJson(content)
+      content  <- content(resource)
+      data     <- toJson(content)
     } yield data).fold(ev.raiseError, ev.pure)
 
     new DefaultLocale[F](data)
@@ -44,14 +45,14 @@ object DefaultLocale {
 
   private def content(stream: InputStream) =
     Try(scala.io.Source.fromInputStream(stream).getLines.mkString("\n")) match {
-      case Success(value) => Right(value)
+      case Success(value)     => Right(value)
       case Failure(exception) => Left(exception)
     }
 
   private[phony] def resource(language: String): Either[Throwable, InputStream] =
     Try(resourceUrl(language).openStream) match {
       case Success(value) => Right(value)
-      case Failure(_) => Left(new RuntimeException(s"Not supported language ${language}"))
+      case Failure(_)     => Left(new RuntimeException(s"Not supported language ${language}"))
     }
 
   private[phony] def resourceUrl(language: String) =

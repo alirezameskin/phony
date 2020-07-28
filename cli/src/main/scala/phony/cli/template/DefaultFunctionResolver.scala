@@ -29,6 +29,7 @@ class DefaultFunctionResolver(val P: Phony[IO]) extends FunctionResolver[IO] {
     case FunctionCall("calendar.date", format :: Nil) => P.calendar.date(format)
     case FunctionCall("calendar.iso8601", Nil)        => P.calendar.iso8601
     case FunctionCall("calendar.timezone", Nil)       => P.calendar.timezone
+    case FunctionCall("calendar.unixTime", Nil)       => P.calendar.unixTime.map(_.toString)
 
     case FunctionCall("contact.firstName", Nil)          => P.contact.firstName
     case FunctionCall("contact.lastName", Nil)           => P.contact.lastName
